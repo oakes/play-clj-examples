@@ -1,0 +1,91 @@
+(set! *warn-on-reflection* true)
+
+(ns minicraft.core
+  (:require [minicraft.entities :as e]
+            [minicraft.utils :as u]
+            [play-clj.core :refer :all]
+            [play-clj.ui :as ui]))
+
+(defn update-camera!
+  [screen entities]
+  (doseq [{:keys [x y is-me?]} entities]
+    (when is-me?
+      (move! screen x y)))
+  entities)
+
+(defscreen main-screen
+  :on-show
+  (fn [screen entities]
+    (let [renderer (orthogonal-tiled-map "level1.tmx" (/ 1 u/pixels-per-tile))
+          camera (orthographic-camera)
+          screen (update! screen :renderer renderer :camera camera)
+          sheet (texture "tiles.png")
+          tiles (texture! sheet :split 16 16)
+          player-images (for [col [0 1 2 3]]
+                          (texture (aget tiles 6 col)))
+          zombie-images (for [col [4 5 6 7]]
+                          (texture (aget tiles 6 col)))
+          slime-images (for [col [4 5]]
+                         (texture (aget tiles 7 col)))
+          tree-image (texture sheet :set-region 0 8 16 16)
+          cactus-image (texture sheet :set-region 16 8 16 16)
+          player (assoc (apply e/create "grass" player-images) :is-me? true)
+          zombies (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
+          slimes (take 5 (repeatedly #(apply e/create "grass" slime-images)))
+          trees (take 20 (repeatedly #(e/create "grass" tree-image)))
+          cacti (take 10 (repeatedly #(e/create "desert" cactus-image)))]
+      (reduce (fn [entities entity]
+                (conj entities (e/randomize-location screen entity entities)))
+              []
+              (concat [player] zombies slimes trees cacti))))
+  :on-render
+  (fn [screen entities]
+    (clear!)
+    (render! screen)
+    (->> (pmap (fn [entity]
+                 (->> entity
+                      (e/move screen)
+                      (e/animate screen)))
+               entities)
+         (e/prevent-moves screen)
+         e/order-by-latitude
+         (draw! screen)
+         (update-camera! screen)))
+  :on-resize
+  (fn [screen entities]
+    (height! screen u/vert-tiles)
+    nil)
+  :on-key-down
+  (fn [{:keys [keycode]} entities]
+    (let [entity (->> entities (filter :is-me?) first)]
+      (cond
+        (= keycode (key-code :space))
+        (e/attack entity entities))))
+  :on-touch-down
+  (fn [{:keys [screen-x screen-y]} entities]
+    (let [entity (->> entities (filter :is-me?) first)
+          min-x (/ (game :width) 3)
+          max-x (* (game :width) (/ 2 3))
+          min-y (/ (game :height) 3)
+          max-y (* (game :height) (/ 2 3))]
+      (cond
+        (and (< min-x screen-x max-x) (< min-y screen-y max-y))
+        (e/attack entity entities)))))
+
+(defscreen text-screen
+  :on-show
+  (fn [screen entities]
+    (update! screen :renderer (stage))
+    (conj entities (assoc (ui/label "0" (color :white)) :id :fps)))
+  :on-render
+  (fn [screen entities]
+    (->> (for [entity entities]
+           (case (:id entity)
+             :fps (doto entity (ui/label! :set-text (str (game :fps))))
+             entity))
+         (draw! screen))))
+
+(defgame minicraft
+  :on-create
+  (fn [this]
+    (set-screen! this main-screen text-screen)))
