@@ -16,8 +16,13 @@
                  [(ui/image "clojure.png")
                   :width 100
                   :height 100
-                  :space-top 50
-                  :space-bottom 50]
+                  :space-top 20
+                  :space-bottom 20]
+                 :row
+                 (ui/select-box ["I'm a select box"
+                                 "I am too"
+                                 "So am I"]
+                                ui-skin)
                  :row
                  (ui/label "I'm a label" ui-skin)
                  :row
