@@ -3,11 +3,15 @@
             [super-koalio.entities :as e]
             [super-koalio.utils :as u]))
 
+(declare super-koalio main-screen)
+
 (defn update-screen!
   [screen entities]
-  (doseq [{:keys [x is-me? to-destroy]} entities]
+  (doseq [{:keys [x y height is-me? to-destroy]} entities]
     (when is-me?
-      (move-x! screen x))
+      (move-x! screen x)
+      (when (< y (- height))
+        (set-screen! super-koalio main-screen)))
     (when-let [[tile-x tile-y] to-destroy]
       (tiled-map-layer! screen "walls" :set-cell tile-x tile-y nil)))
   entities)
