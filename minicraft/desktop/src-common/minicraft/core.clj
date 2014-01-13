@@ -45,12 +45,9 @@
   (fn [screen entities]
     (clear!)
     (render! screen)
-    (->> (pmap (fn [entity]
-                 (->> entity
-                      (e/move screen)
-                      (e/animate screen)))
-               entities)
-         (e/prevent-moves screen)
+    (->> entities
+         (pmap #(->> % (e/move screen) (e/animate screen)))
+         e/prevent-moves
          e/order-by-latitude
          (draw! screen)
          (update-camera! screen)))

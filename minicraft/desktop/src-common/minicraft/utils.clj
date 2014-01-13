@@ -11,7 +11,7 @@
 (def ^:const background-layer "grass")
 
 (defn decelerate
-  [^double velocity]
+  [velocity]
   (let [velocity (* velocity deceleration)]
     (if (< (Math/abs velocity) 0.5)
       0

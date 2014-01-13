@@ -90,20 +90,22 @@
        (drop-while #(u/is-invalid-location? screen % entities))
        first))
 
+(defn ^:private prevent-move
+  [{:keys [x y x-change y-change] :as entity} entities]
+  (if (and (or (not= 0 x-change) (not= 0 y-change))
+           (u/is-near-entities? entity entities 1))
+    (assoc entity
+           :x-velocity 0
+           :y-velocity 0
+           :x-change 0
+           :y-change 0
+           :x (- x x-change)
+           :y (- y y-change))
+    entity))
+
 (defn prevent-moves
-  [screen entities]
-  (pmap (fn [{:keys [x y x-change y-change] :as entity}]
-          (if (and (or (not= 0 x-change) (not= 0 y-change))
-                   (u/is-near-entities? entity entities 1))
-            (assoc entity
-                   :x-velocity 0
-                   :y-velocity 0
-                   :x-change 0
-                   :y-change 0
-                   :x (- x x-change)
-                   :y (- y y-change))
-            entity))
-        entities))
+  [entities]
+  (pmap #(prevent-move % entities) entities))
 
 (defn order-by-latitude
   [entities]
