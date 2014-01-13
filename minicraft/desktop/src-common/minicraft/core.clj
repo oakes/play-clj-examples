@@ -78,15 +78,24 @@
 (defscreen text-screen
   :on-show
   (fn [screen entities]
-    (update! screen :renderer (stage))
-    (conj entities (assoc (ui/label "0" (color :white)) :id :fps)))
+    (update! screen
+             :renderer (stage)
+             :camera (orthographic-camera))
+    (assoc (ui/label "0" (color :white))
+           :id :fps
+           :x 5))
   :on-render
   (fn [screen entities]
+    (render! screen)
     (->> (for [entity entities]
            (case (:id entity)
              :fps (doto entity (ui/label! :set-text (str (game :fps))))
              entity))
-         (draw! screen))))
+         (draw! screen)))
+  :on-resize
+  (fn [screen entities]
+    (height! screen 300)
+    nil))
 
 (defgame minicraft
   :on-create
