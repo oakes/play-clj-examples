@@ -85,10 +85,11 @@
   [screen {:keys [width height] :as entity} entities]
   (->> (for [tile-x (range 0 (- u/map-width width))
              tile-y (range 0 (- u/map-height height))]
-         (assoc entity :x tile-x :y tile-y))
+         {:x tile-x :y tile-y})
        shuffle
-       (drop-while #(u/is-invalid-location? screen % entities))
-       first))
+       (drop-while #(u/is-invalid-location? screen (merge entity %) entities))
+       first
+       (merge entity)))
 
 (defn ^:private prevent-move
   [{:keys [x y x-change y-change] :as entity} entities]
