@@ -1,8 +1,8 @@
 ## Introduction
 
 * **minicraft** - an RPG (clone of Notch's [Ludum Dare entry](http://www.ludumdare.com/compo/ludum-dare-22/?action=preview&uid=398))
-* **super-koalio** - a platformer (clone of the [LibGDX test game](https://github.com/libgdx/libgdx/blob/master/tests/gdx-tests/src/com/badlogic/gdx/tests/superkoalio/SuperKoalio.java))
-* **ui-gallery** - a layout with UI widgets (for start screens, settings, etc)
+* **super-koalio** - a platformer (clone of a [LibGDX test game](https://github.com/libgdx/libgdx/blob/master/tests/gdx-tests/src/com/badlogic/gdx/tests/superkoalio/SuperKoalio.java))
+* **ui-gallery** - a random assortment of UI widgets (for start screens, settings, etc)
 
 ## Licensing
 
