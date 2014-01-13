@@ -3,11 +3,13 @@
             [super-koalio.entities :as e]
             [super-koalio.utils :as u]))
 
-(defn update-camera!
+(defn update-screen!
   [screen entities]
-  (doseq [{:keys [x is-me?]} entities]
+  (doseq [{:keys [x is-me? to-destroy]} entities]
     (when is-me?
-      (move-x! screen x)))
+      (move-x! screen x))
+    (when-let [[tile-x tile-y] to-destroy]
+      (tiled-map-layer! screen "walls" :set-cell tile-x tile-y nil)))
   entities)
 
 (defscreen main-screen
@@ -30,7 +32,7 @@
                     (e/prevent-move screen)
                     (e/animate screen)))
          (draw! screen)
-         (update-camera! screen)))
+         (update-screen! screen)))
   :on-resize
   (fn [screen entities]
     (height! screen u/vertical-tiles)

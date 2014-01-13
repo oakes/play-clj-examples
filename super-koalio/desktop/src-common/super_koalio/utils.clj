@@ -3,9 +3,9 @@
 
 (def ^:const vertical-tiles 20)
 (def ^:const pixels-per-tile 16)
-(def ^:const duration 0.2)
+(def ^:const duration 0.15)
 (def ^:const damping 0.5)
-(def ^:const max-velocity 10)
+(def ^:const max-velocity 14)
 (def ^:const max-jump-velocity (* max-velocity 4))
 (def ^:const deceleration 0.9)
 (def ^:const gravity -2.5)
@@ -57,13 +57,13 @@
     :else
     direction))
 
-(defn is-touching-layer?
+(defn get-touching-tile
   [screen {:keys [x y width height]} & layer-names]
   (let [layers (map #(tiled-map-layer screen %) layer-names)]
     (->> (for [tile-x (range (int x) (+ x width))
                tile-y (range (int y) (+ y height))]
-           (some #(tiled-map-cell screen % tile-x tile-y) layers))
+           (some #(when (tiled-map-cell screen % tile-x tile-y)
+                    [tile-x tile-y])
+                 layers))
          (drop-while nil?)
-         first
-         nil?
-         not)))
+         first)))

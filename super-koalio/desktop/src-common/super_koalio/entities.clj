@@ -66,9 +66,10 @@
           old-y (- y y-change)
           entity-x (assoc entity :y old-y)
           entity-y (assoc entity :x old-x)
-          can-jump? (< y-change 0)]
+          up? (> y-change 0)]
       (merge entity
-             (when (u/is-touching-layer? screen entity-x "walls")
+             (when (u/get-touching-tile screen entity-x "walls")
                {:x-velocity 0 :x-change 0 :x old-x})
-             (when (u/is-touching-layer? screen entity-y "walls")
-               {:y-velocity 0 :y-change 0 :y old-y :can-jump? can-jump?})))))
+             (when-let [tile (u/get-touching-tile screen entity-y "walls")]
+               {:y-velocity 0 :y-change 0 :y old-y
+                :can-jump? (not up?) :to-destroy (when up? tile)})))))

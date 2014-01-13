@@ -6,7 +6,7 @@
             [play-clj.core :refer :all]
             [play-clj.ui :as ui]))
 
-(defn update-camera!
+(defn update-screen!
   [screen entities]
   (doseq [{:keys [x y is-me?]} entities]
     (when is-me?
@@ -50,7 +50,7 @@
          e/prevent-moves
          e/order-by-latitude
          (draw! screen)
-         (update-camera! screen)))
+         (update-screen! screen)))
   :on-resize
   (fn [screen entities]
     (height! screen u/vertical-tiles)
