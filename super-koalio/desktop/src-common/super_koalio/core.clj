@@ -5,9 +5,9 @@
 
 (defn update-camera!
   [screen entities]
-  (doseq [{:keys [x y is-me?]} entities]
+  (doseq [{:keys [x is-me?]} entities]
     (when is-me?
-      (move! screen x y)))
+      (move-x! screen x)))
   entities)
 
 (defscreen main-screen
@@ -25,6 +25,7 @@
     (clear! 0.5 0.5 1 1)
     (render! screen)
     (->> entities
+         (map #(->> % (e/move screen) (e/animate screen)))
          (draw! screen)
          (update-camera! screen)))
   :on-resize
