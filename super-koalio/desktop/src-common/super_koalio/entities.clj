@@ -20,7 +20,7 @@
          :x 20
          :y 10
          :is-me? true
-         :can-jump? true
+         :can-jump? false
          :direction :right))
 
 (defn move
@@ -60,16 +60,14 @@
 
 (defn prevent-move
   [screen {:keys [x y x-change y-change] :as entity}]
-  (if (and (= 0 x-change) (= 0 y-change))
-    entity
-    (let [old-x (- x x-change)
-          old-y (- y y-change)
-          entity-x (assoc entity :y old-y)
-          entity-y (assoc entity :x old-x)
-          up? (> y-change 0)]
-      (merge entity
-             (when (u/get-touching-tile screen entity-x "walls")
-               {:x-velocity 0 :x-change 0 :x old-x})
-             (when-let [tile (u/get-touching-tile screen entity-y "walls")]
-               {:y-velocity 0 :y-change 0 :y old-y
-                :can-jump? (not up?) :to-destroy (when up? tile)})))))
+  (let [old-x (- x x-change)
+        old-y (- y y-change)
+        entity-x (assoc entity :y old-y)
+        entity-y (assoc entity :x old-x)
+        up? (> y-change 0)]
+    (merge entity
+           (when (u/get-touching-tile screen entity-x "walls")
+             {:x-velocity 0 :x-change 0 :x old-x})
+           (when-let [tile (u/get-touching-tile screen entity-y "walls")]
+             {:y-velocity 0 :y-change 0 :y old-y
+              :can-jump? (not up?) :to-destroy (when up? tile)}))))
