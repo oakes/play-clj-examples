@@ -10,7 +10,7 @@
   [screen entities]
   (doseq [{:keys [x y is-me?]} entities]
     (when is-me?
-      (move! screen x y)))
+      (position! screen x y)))
   entities)
 
 (defscreen main-screen

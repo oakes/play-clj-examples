@@ -9,7 +9,7 @@
   [screen entities]
   (doseq [{:keys [x y height is-me? to-destroy]} entities]
     (when is-me?
-      (move-x! screen x)
+      (x! screen x)
       (when (< y (- height))
         (set-screen! super-koalio main-screen)))
     (when-let [[tile-x tile-y] to-destroy]
