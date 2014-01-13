@@ -3,7 +3,7 @@
             [play-clj.core :refer :all]))
 
 (defn create
-  ([start-layer img]
+  ([start-layer img] ; trees and cacti
     (assoc img
            :width 2
            :height 2
@@ -12,37 +12,32 @@
            :start-layer start-layer
            :min-distance 2
            :health 6))
-  ([start-layer down up]
+  ([start-layer down up] ; slimes
     (let [anim (animation u/duration [down up])]
-      (assoc down
-             :width 2
-             :height 2
-             :x-velocity 0
-             :y-velocity 0
+      (assoc (create start-layer down)
              :down anim
              :up anim
              :right anim
              :left anim
-             :start-layer start-layer
-             :min-distance 2
+             :min-distance 10
              :health 8)))
-  ([start-layer down up stand-right walk-right]
+  ([start-layer down up stand-right walk-right] ; zombies
     (let [down-flip (texture down :flip true false)
           up-flip (texture up :flip true false)
           stand-flip (texture stand-right :flip true false)
           walk-flip (texture walk-right :flip true false)]
-      (assoc down
-             :width 2
-             :height 2
-             :x-velocity 0
-             :y-velocity 0
+      (assoc (create start-layer down)
              :down (animation u/duration [down down-flip])
              :up (animation u/duration [up up-flip])
              :right (animation u/duration [stand-right walk-right])
              :left (animation u/duration [stand-flip walk-flip])
-             :start-layer start-layer
              :min-distance 10
-             :health 10))))
+             :health 10)))
+  ([start-layer attack down up stand-right walk-right] ; player
+    (assoc (create start-layer down up stand-right walk-right)
+           :is-me? true
+           :attack-right attack
+           :attack-left (texture attack :flip true false))))
 
 (defn move
   [{:keys [delta-time]} {:keys [x y] :as entity}]
@@ -60,23 +55,26 @@
              :y (+ y y-change))
       entity)))
 
+(defn ^:private animate-direction
+  [screen entity]
+  (if-let [direction (u/get-direction entity)]
+    (merge entity
+           (animation->texture screen (get entity direction))
+           {:direction direction})
+    entity))
+
+(defn ^:private animate-water
+  [screen entity]
+  (if (u/is-on-layer? screen entity "water")
+    (merge entity (texture entity :set-region-height u/pixels-per-tile))
+    entity))
+
 (defn animate
-  [screen {:keys [up down left right x-velocity y-velocity] :as entity}]
-  (let [anim (cond
-               (not= y-velocity 0)
-               (if (> y-velocity 0) up down)
-               (not= x-velocity 0)
-               (if (> x-velocity 0) right left)
-               :else nil)
-        img (if anim
-              (animation->texture screen anim)
-              entity)
-        img (if (u/is-on-layer? screen entity "water")
-              (texture img :set-region-height u/pixels-per-tile)
-              img)]
-    (assoc (merge entity img)
-           :width (/ (texture! img :get-region-width) u/pixels-per-tile)
-           :height (/ (texture! img :get-region-height) u/pixels-per-tile))))
+  [screen entity]
+  (->> entity
+       (animate-direction screen)
+       (animate-water screen)
+       u/update-texture-size))
 
 (defn attack
   [entity entities]

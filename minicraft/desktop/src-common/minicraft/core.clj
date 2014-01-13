@@ -28,8 +28,9 @@
           slime-images (for [col [4 5]]
                          (texture (aget tiles 7 col)))
           tree-image (texture sheet :set-region 0 8 16 16)
-          cactus-image (texture sheet :set-region 16 8 16 16)]
-      (->> [(assoc (apply e/create "grass" player-images) :is-me? true)
+          cactus-image (texture sheet :set-region 16 8 16 16)
+          attack-image (texture sheet :set-region 32 8 16 16)]
+      (->> [(apply e/create "grass" attack-image player-images)
             (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
             (take 5 (repeatedly #(apply e/create "grass" slime-images)))
             (take 20 (repeatedly #(e/create "grass" tree-image)))
