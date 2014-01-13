@@ -15,7 +15,7 @@
     (when-let [[tile-x tile-y] to-destroy]
       (tiled-map-layer! (tiled-map-layer screen "walls")
                         :set-cell tile-x tile-y nil)))
-  entities)
+  (map #(dissoc % :to-destroy) entities))
 
 (defscreen main-screen
   :on-show
