@@ -30,11 +30,12 @@
           tree-image (texture sheet :set-region 0 8 16 16)
           cactus-image (texture sheet :set-region 16 8 16 16)
           attack-image (texture sheet :set-region 32 8 16 16)]
-      (->> [(apply e/create "grass" attack-image player-images)
-            (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
-            (take 5 (repeatedly #(apply e/create "grass" slime-images)))
-            (take 20 (repeatedly #(e/create "grass" tree-image)))
-            (take 10 (repeatedly #(e/create "desert" cactus-image)))]
+      (->> (pvalues
+             (apply e/create "grass" attack-image player-images)
+             (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
+             (take 5 (repeatedly #(apply e/create "grass" slime-images)))
+             (take 20 (repeatedly #(e/create "grass" tree-image)))
+             (take 10 (repeatedly #(e/create "desert" cactus-image))))
            flatten
            (reduce
              (fn [entities entity]
@@ -55,7 +56,7 @@
          (update-camera! screen)))
   :on-resize
   (fn [screen entities]
-    (height! screen u/vert-tiles)
+    (height! screen u/vertical-tiles)
     nil)
   :on-key-down
   (fn [{:keys [keycode]} entities]

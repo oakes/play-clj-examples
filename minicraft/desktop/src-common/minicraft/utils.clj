@@ -1,7 +1,7 @@
 (ns minicraft.utils
   (:require [play-clj.core :refer :all]))
 
-(def ^:const vert-tiles 20)
+(def ^:const vertical-tiles 20)
 (def ^:const pixels-per-tile 8)
 (def ^:const duration 0.2)
 (def ^:const max-velocity 5)
@@ -52,7 +52,7 @@
     y-velocity))
 
 (defn get-direction
-  [{:keys [x-velocity y-velocity direction]}]
+  [{:keys [x-velocity y-velocity]}]
   (cond
     (not= y-velocity 0)
     (if (> y-velocity 0) :up :down)
