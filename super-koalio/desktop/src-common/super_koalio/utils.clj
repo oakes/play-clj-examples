@@ -4,7 +4,8 @@
 (def ^:const vertical-tiles 20)
 (def ^:const pixels-per-tile 16)
 (def ^:const duration 0.2)
-(def ^:const max-velocity 5)
+(def ^:const damping 0.5)
+(def ^:const max-velocity 10)
 (def ^:const max-jump-velocity (* max-velocity 4))
 (def ^:const deceleration 0.9)
 (def ^:const gravity -2.5)
@@ -12,7 +13,7 @@
 (defn decelerate
   [velocity]
   (let [velocity (* velocity deceleration)]
-    (if (< (Math/abs velocity) 0.5)
+    (if (< (Math/abs velocity) damping)
       0
       velocity)))
 
@@ -55,3 +56,14 @@
     (< x-velocity 0) :left
     :else
     direction))
+
+(defn is-touching-layer?
+  [screen {:keys [x y width height]} & layer-names]
+  (let [layers (map #(tiled-map-layer screen %) layer-names)]
+    (->> (for [tile-x (range (int x) (+ x width))
+               tile-y (range (int y) (+ y height))]
+           (some #(tiled-map-cell screen % tile-x tile-y) layers))
+         (drop-while nil?)
+         first
+         nil?
+         not)))

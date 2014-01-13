@@ -55,4 +55,20 @@
                (animation->texture screen walk-right)
                (animation->texture screen walk-left))
              :else
-             (if (= direction :right) stand-right stand-left)))))
+             (if (= direction :right) stand-right stand-left))
+           {:direction direction})))
+
+(defn prevent-move
+  [screen {:keys [x y x-change y-change] :as entity}]
+  (if (and (= 0 x-change) (= 0 y-change))
+    entity
+    (let [old-x (- x x-change)
+          old-y (- y y-change)
+          entity-x (assoc entity :y old-y)
+          entity-y (assoc entity :x old-x)
+          can-jump? (< y-change 0)]
+      (merge entity
+             (when (u/is-touching-layer? screen entity-x "walls")
+               {:x-velocity 0 :x-change 0 :x old-x})
+             (when (u/is-touching-layer? screen entity-y "walls")
+               {:y-velocity 0 :y-change 0 :y old-y :can-jump? can-jump?})))))

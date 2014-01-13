@@ -25,7 +25,10 @@
     (clear! 0.5 0.5 1 1)
     (render! screen)
     (->> entities
-         (map #(->> % (e/move screen) (e/animate screen)))
+         (map #(->> %
+                    (e/move screen)
+                    (e/prevent-move screen)
+                    (e/animate screen)))
          (draw! screen)
          (update-camera! screen)))
   :on-resize
