@@ -13,7 +13,8 @@
       (when (< y (- height))
         (set-screen! super-koalio main-screen)))
     (when-let [[tile-x tile-y] to-destroy]
-      (tiled-map-layer! screen "walls" :set-cell tile-x tile-y nil)))
+      (tiled-map-layer! (tiled-map-layer screen "walls")
+                        :set-cell tile-x tile-y nil)))
   entities)
 
 (defscreen main-screen
