@@ -4,6 +4,7 @@
 (def ^:const vertical-tiles 20)
 (def ^:const pixels-per-tile 8)
 (def ^:const duration 0.2)
+(def ^:const damping 0.5)
 (def ^:const max-velocity 5)
 (def ^:const deceleration 0.9)
 (def ^:const map-width 50)
@@ -13,7 +14,7 @@
 (defn decelerate
   [velocity]
   (let [velocity (* velocity deceleration)]
-    (if (< (Math/abs velocity) 0.5)
+    (if (< (Math/abs velocity) damping)
       0
       velocity)))
 
