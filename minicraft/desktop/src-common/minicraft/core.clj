@@ -28,16 +28,17 @@
           slime-images (for [col [4 5]]
                          (texture (aget tiles 7 col)))
           tree-image (texture sheet :set-region 0 8 16 16)
-          cactus-image (texture sheet :set-region 16 8 16 16)
-          player (assoc (apply e/create "grass" player-images) :is-me? true)
-          zombies (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
-          slimes (take 5 (repeatedly #(apply e/create "grass" slime-images)))
-          trees (take 20 (repeatedly #(e/create "grass" tree-image)))
-          cacti (take 10 (repeatedly #(e/create "desert" cactus-image)))]
-      (reduce (fn [entities entity]
-                (conj entities (e/randomize-location screen entity entities)))
-              []
-              (concat [player] zombies slimes trees cacti))))
+          cactus-image (texture sheet :set-region 16 8 16 16)]
+      (->> [(assoc (apply e/create "grass" player-images) :is-me? true)
+            (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
+            (take 5 (repeatedly #(apply e/create "grass" slime-images)))
+            (take 20 (repeatedly #(e/create "grass" tree-image)))
+            (take 10 (repeatedly #(e/create "desert" cactus-image)))]
+           flatten
+           (reduce
+             (fn [entities entity]
+               (conj entities (e/randomize-location screen entity entities)))
+             []))))
   :on-render
   (fn [screen entities]
     (clear!)

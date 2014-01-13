@@ -10,7 +10,8 @@
            :x-velocity 0
            :y-velocity 0
            :start-layer start-layer
-           :min-distance 2))
+           :min-distance 2
+           :health 6))
   ([start-layer down up]
     (let [anim (animation u/duration [down up])]
       (assoc down
@@ -23,7 +24,8 @@
              :right anim
              :left anim
              :start-layer start-layer
-             :min-distance 2)))
+             :min-distance 2
+             :health 8)))
   ([start-layer down up stand-right walk-right]
     (let [down-flip (texture down :flip true false)
           up-flip (texture up :flip true false)
@@ -39,7 +41,8 @@
              :right (animation u/duration [stand-right walk-right])
              :left (animation u/duration [stand-flip walk-flip])
              :start-layer start-layer
-             :min-distance 10))))
+             :min-distance 10
+             :health 10))))
 
 (defn move
   [{:keys [delta-time]} {:keys [x y] :as entity}]
@@ -76,7 +79,9 @@
            :height (/ (texture! img :get-region-height) u/pixels-per-tile))))
 
 (defn attack
-  [entity entities])
+  [entity entities]
+  (let [close-entities (filter #(u/is-near-entity? entity % 1.5) entities)]
+    (println (count close-entities))))
 
 (defn randomize-location
   [screen {:keys [width height] :as entity} entities]
