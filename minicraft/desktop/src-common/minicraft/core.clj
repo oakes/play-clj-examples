@@ -4,7 +4,7 @@
   (:require [minicraft.entities :as e]
             [minicraft.utils :as u]
             [play-clj.core :refer :all]
-            [play-clj.ui :as ui]))
+            [play-clj.ui :refer :all]))
 
 (defn update-screen!
   [screen entities]
@@ -78,7 +78,7 @@
     (update! screen
              :renderer (stage)
              :camera (orthographic-camera))
-    (assoc (ui/label "0" (color :white))
+    (assoc (label "0" (color :white))
            :id :fps
            :x 5))
   :on-render
@@ -86,7 +86,7 @@
     (render! screen)
     (->> (for [entity entities]
            (case (:id entity)
-             :fps (doto entity (ui/label! :set-text (str (game :fps))))
+             :fps (doto entity (label! :set-text (str (game :fps))))
              entity))
          (draw! screen)))
   :on-resize
