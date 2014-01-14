@@ -79,7 +79,7 @@
          first
          nil?)))
 
-(defn tiled-map-layer-names
+(defn ^:private tiled-map-layer-names
   [screen]
   (for [layer (tiled-map-layers screen)]
     (tiled-map-layer! layer :get-name)))
