@@ -77,24 +77,24 @@
        u/update-texture-size))
 
 (defn attack
-  [entity entities]
+  [entities entity]
   (let [close-entities (filter #(u/is-near-entity? entity % 1.5) entities)]
     (println (count close-entities))))
 
 (defn randomize-location
-  [screen {:keys [width height] :as entity} entities]
+  [screen entities {:keys [width height] :as entity}]
   (->> (for [tile-x (range 0 (- u/map-width width))
              tile-y (range 0 (- u/map-height height))]
          {:x tile-x :y tile-y})
        shuffle
-       (drop-while #(u/is-invalid-location? screen (merge entity %) entities))
+       (drop-while #(u/is-invalid-location? screen entities (merge entity %)))
        first
        (merge entity)))
 
-(defn ^:private prevent-move
-  [{:keys [x y x-change y-change] :as entity} entities]
+(defn prevent-move
+  [entities {:keys [x y x-change y-change] :as entity}]
   (if (and (or (not= 0 x-change) (not= 0 y-change))
-           (u/is-near-entities? entity entities 1))
+           (u/is-near-entities? entities entity 1))
     (assoc entity
            :x-velocity 0
            :y-velocity 0
@@ -103,10 +103,6 @@
            :x (- x x-change)
            :y (- y y-change))
     entity))
-
-(defn prevent-moves
-  [entities]
-  (pmap #(prevent-move % entities) entities))
 
 (defn order-by-latitude
   [entities]

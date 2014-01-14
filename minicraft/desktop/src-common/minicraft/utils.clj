@@ -101,10 +101,10 @@
        (< (Math/abs ^double (- y (:y e2))) min-distance)))
 
 (defn is-near-entities?
-  [entity entities min-distance]
+  [entities entity min-distance]
   (some #(is-near-entity? entity % min-distance) entities))
 
 (defn is-invalid-location?
-  [screen entity entities]
+  [screen entities entity]
   (or (not (is-on-start-layer? screen entity))
-      (is-near-entities? entity entities (:min-distance entity))))
+      (is-near-entities? entities entity (:min-distance entity))))

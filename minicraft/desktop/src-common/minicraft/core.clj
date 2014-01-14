@@ -39,15 +39,17 @@
            flatten
            (reduce
              (fn [entities entity]
-               (conj entities (e/randomize-location screen entity entities)))
+               (conj entities (e/randomize-location screen entities entity)))
              []))))
   :on-render
   (fn [screen entities]
     (clear!)
     (render! screen)
     (->> entities
-         (pmap #(->> % (e/move screen) (e/animate screen)))
-         e/prevent-moves
+         (pmap #(->> %
+                     (e/move screen)
+                     (e/prevent-move entities)
+                     (e/animate screen)))
          e/order-by-latitude
          (draw! screen)
          (update-screen! screen)))
@@ -60,7 +62,7 @@
     (let [entity (->> entities (filter :is-me?) first)]
       (cond
         (= keycode (key-code :space))
-        (e/attack entity entities))))
+        (e/attack entities entity))))
   :on-touch-down
   (fn [{:keys [screen-x screen-y]} entities]
     (let [entity (->> entities (filter :is-me?) first)
