@@ -9,10 +9,12 @@
          :stand-left (texture stand :flip true false)
          :jump-right jump
          :jump-left (texture jump :flip true false)
-         :walk-right (animation u/duration walk :loop-pingpong)
+         :walk-right (animation u/duration
+                                walk
+                                :set-play-mode (play-mode :loop-pingpong))
          :walk-left (animation u/duration
                                (map #(texture % :flip true false) walk)
-                               :loop-pingpong)
+                               :set-play-mode (play-mode :loop-pingpong))
          :width 1
          :height (/ 26 18)
          :x-velocity 0
