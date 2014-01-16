@@ -1,5 +1,6 @@
 (ns super-koalio.entities
   (:require [play-clj.core :refer :all]
+            [play-clj.g2d :refer :all]
             [super-koalio.utils :as u]))
 
 (defn create

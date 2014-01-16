@@ -1,5 +1,6 @@
 (ns super-koalio.core
   (:require [play-clj.core :refer :all]
+            [play-clj.g2d :refer :all]
             [super-koalio.entities :as e]
             [super-koalio.utils :as u]))
 
@@ -30,13 +31,12 @@
   :on-render
   (fn [screen entities]
     (clear! 0.5 0.5 1 1)
-    (render! screen)
     (->> entities
          (map #(->> %
                     (e/move screen)
                     (e/prevent-move screen)
                     (e/animate screen)))
-         (draw! screen)
+         (render! screen)
          (update-screen! screen)))
   :on-resize
   (fn [screen entities]

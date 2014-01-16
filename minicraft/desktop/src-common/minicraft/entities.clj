@@ -1,6 +1,7 @@
 (ns minicraft.entities
   (:require [minicraft.utils :as u]
-            [play-clj.core :refer :all]))
+            [play-clj.core :refer :all]
+            [play-clj.g2d :refer :all]))
 
 (defn create
   ([start-layer img] ; trees and cacti

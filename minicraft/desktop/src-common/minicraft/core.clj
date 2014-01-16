@@ -4,6 +4,7 @@
   (:require [minicraft.entities :as e]
             [minicraft.utils :as u]
             [play-clj.core :refer :all]
+            [play-clj.g2d :refer :all]
             [play-clj.ui :refer :all]))
 
 (defn update-screen!
@@ -44,7 +45,6 @@
   :on-render
   (fn [screen entities]
     (clear!)
-    (render! screen)
     (->> entities
          (pmap (fn [entity]
                  (->> entity
@@ -52,7 +52,7 @@
                       (e/animate screen)
                       (e/prevent-move (remove #(= % entity) entities)))))
          e/order-by-latitude
-         (draw! screen)
+         (render! screen)
          (update-screen! screen)))
   :on-resize
   (fn [screen entities]
@@ -86,12 +86,11 @@
            :x 5))
   :on-render
   (fn [screen entities]
-    (render! screen)
     (->> (for [entity entities]
            (case (:id entity)
              :fps (doto entity (label! :set-text (str (game :fps))))
              entity))
-         (draw! screen)))
+         (render! screen)))
   :on-resize
   (fn [screen entities]
     (height! screen 300)
