@@ -46,10 +46,11 @@
     (clear!)
     (render! screen)
     (->> entities
-         (pmap #(->> %
-                     (e/move screen)
-                     (e/prevent-move entities)
-                     (e/animate screen)))
+         (pmap (fn [entity]
+                 (->> entity
+                      (e/move screen)
+                      (e/animate screen)
+                      (e/prevent-move (remove #(= % entity) entities)))))
          e/order-by-latitude
          (draw! screen)
          (update-screen! screen)))

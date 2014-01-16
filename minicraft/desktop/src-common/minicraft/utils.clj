@@ -61,12 +61,6 @@
     (if (> x-velocity 0) :right :left)
     :else nil))
 
-(defn update-texture-size
-  [entity]
-  (assoc entity
-         :width (/ (texture! entity :get-region-width) pixels-per-tile)
-         :height (/ (texture! entity :get-region-height) pixels-per-tile)))
-
 (defn is-on-layer?
   [screen {:keys [x y width height]} & layer-names]
   (let [layers (map #(tiled-map-layer screen %) layer-names)]

@@ -69,12 +69,18 @@
     (merge entity (texture entity :set-region-height u/pixels-per-tile))
     entity))
 
+(defn ^:private update-texture-size
+  [entity]
+  (assoc entity
+         :width (/ (texture! entity :get-region-width) u/pixels-per-tile)
+         :height (/ (texture! entity :get-region-height) u/pixels-per-tile)))
+
 (defn animate
   [screen entity]
   (->> entity
        (animate-direction screen)
        (animate-water screen)
-       u/update-texture-size))
+       update-texture-size))
 
 (defn attack
   [entities entity]
