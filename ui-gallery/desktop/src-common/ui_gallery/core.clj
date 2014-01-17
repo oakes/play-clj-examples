@@ -5,9 +5,7 @@
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-    (update! screen
-             :renderer (stage)
-             :camera (orthographic-camera))
+    (update! screen :camera (orthographic) :renderer (stage))
     (let [ui-skin (skin "uiskin.json")]
       (table [(check-box "I'm a check box" ui-skin)
               :row

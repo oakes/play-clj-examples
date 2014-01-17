@@ -17,9 +17,9 @@
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-    (let [renderer (orthogonal-tiled-map "level1.tmx" (/ 1 u/pixels-per-tile))
-          camera (orthographic-camera)
-          screen (update! screen :renderer renderer :camera camera)
+    (let [unit-scale (/ 1 u/pixels-per-tile)
+          screen (->> (orthogonal-tiled-map "level1.tmx" unit-scale)
+                      (update! screen :camera (orthographic) :renderer))
           sheet (texture "tiles.png")
           tiles (texture! sheet :split 16 16)
           player-images (for [col [0 1 2 3]]
@@ -78,9 +78,7 @@
 (defscreen text-screen
   :on-show
   (fn [screen entities]
-    (update! screen
-             :renderer (stage)
-             :camera (orthographic-camera))
+    (update! screen :camera (orthographic) :renderer (stage))
     (assoc (label "0" (color :white))
            :id :fps
            :x 5))
