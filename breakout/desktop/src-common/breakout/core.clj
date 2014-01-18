@@ -26,6 +26,11 @@
        (fixture :density 1 :shape)
        (create-body! screen :static :set-transform x y 0 :create-fixture)))
 
+(defn move-paddle!
+  [entities]
+  (when-let [entity (some #(if (:paddle? %) %) entities)]
+    (body-x! entity (- (/ (game :x) pixels-per-tile) (/ (:width entity) 2)))))
+
 (defscreen main-screen
   :on-show
   (fn [screen entities]
@@ -66,7 +71,7 @@
        (for [col (range block-cols)
              row (range block-rows)
              :let [x (* col block-w)
-                   y (+ (* row block-h) (/ game-h 2))]]
+                   y (+ (* row block-h) (- game-h (* block-h block-rows)))]]
          (assoc block
                 :block? true
                 :body (create-rect-body! screen x y block-w block-h)
@@ -80,12 +85,12 @@
          (step! screen)))
   :on-mouse-moved
   (fn [screen entities]
-    (for [entity entities]
-      (cond
-        (:paddle? entity)
-        (body-x! entity (- (/ (game :x) pixels-per-tile) (/ (:width entity) 2)))
-        :else
-        entity)))
+    (move-paddle! entities)
+    nil)
+  :on-touch-dragged
+  (fn [screen entities]
+    (move-paddle! entities)
+    nil)
   :on-begin-contact
   (fn [screen entities]
     (when-let [entity (first-contact screen entities)]
