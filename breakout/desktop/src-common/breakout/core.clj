@@ -46,25 +46,23 @@
           block-h (/ (texture! block :get-region-height) pixels-per-tile)
           block-cols (int (/ game-w block-w))
           block-rows (int (/ game-h 2 block-h))]
+      ; set the screen width in tiles
       (width! screen game-w)
-      [; create ball
-       (assoc ball
+      ; return the entities
+      [(assoc ball
               :ball? true
               :body (doto (create-ball-body! screen ball-x ball-y (/ ball-w 2))
                       (body! :set-linear-velocity 10 10))
               :x ball-x :y ball-y
               :width ball-w :height ball-h)
-       ; create paddle
        (assoc block
-              :id :paddle
+              :paddle? true
               :body (create-rect-body! screen 0 0 block-w block-h)
               :x 0 :y 0
               :width block-w
               :height block-h)
-       ; create wall and floor
        {:wall? true :body (create-rect-body! screen 0 0 game-w game-h)}
        {:floor? true :body (create-rect-body! screen 0 0 game-w floor-h)}
-       ; create blocks
        (for [col (range block-cols)
              row (range block-rows)
              :let [x (* col block-w)
@@ -83,9 +81,10 @@
   :on-mouse-moved
   (fn [screen entities]
     (for [entity entities]
-      (case (:id entity)
-        :paddle (body-x! entity (- (/ (game :x) pixels-per-tile)
-                                   (/ (:width entity) 2)))
+      (cond
+        (:paddle? entity)
+        (body-x! entity (- (/ (game :x) pixels-per-tile) (/ (:width entity) 2)))
+        :else
         entity)))
   :on-begin-contact
   (fn [screen entities]
