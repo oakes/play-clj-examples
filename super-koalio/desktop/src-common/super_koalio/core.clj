@@ -1,10 +1,11 @@
 (ns super-koalio.core
   (:require [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
+            [play-clj.ui :refer :all]
             [super-koalio.entities :as e]
             [super-koalio.utils :as u]))
 
-(declare super-koalio main-screen)
+(declare super-koalio main-screen text-screen)
 
 (defn update-screen!
   [screen entities]
@@ -12,7 +13,7 @@
     (when is-me?
       (x! screen x)
       (when (< y (- height))
-        (set-screen! super-koalio main-screen)))
+        (set-screen! super-koalio main-screen text-screen)))
     (when-let [[tile-x tile-y] to-destroy]
       (tiled-map-layer! (tiled-map-layer screen "walls")
                         :set-cell tile-x tile-y nil)))
@@ -43,7 +44,26 @@
     (height! screen u/vertical-tiles)
     nil))
 
+(defscreen text-screen
+  :on-show
+  (fn [screen entities]
+    (update! screen :camera (orthographic) :renderer (stage))
+    (assoc (label "0" (color :white))
+           :id :fps
+           :x 5))
+  :on-render
+  (fn [screen entities]
+    (->> (for [entity entities]
+           (case (:id entity)
+             :fps (doto entity (label! :set-text (str (game :fps))))
+             entity))
+         (render! screen)))
+  :on-resize
+  (fn [screen entities]
+    (height! screen 300)
+    nil))
+
 (defgame super-koalio
   :on-create
   (fn [this]
-    (set-screen! this main-screen)))
+    (set-screen! this main-screen text-screen)))
