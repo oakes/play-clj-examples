@@ -4,7 +4,8 @@
   (:require [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
             [play-clj.g2d-physics :refer :all]
-            [play-clj.ui :refer :all]))
+            [play-clj.ui :refer :all]
+            [play-clj.math :as m]))
 
 (declare breakout main-screen text-screen)
 
@@ -13,8 +14,9 @@
 (defn create-ball-body!
   [screen x y radius]
   (->> (circle radius)
-       (fixture :density 1 :friction 0 :restitution 1 :shape)
-       (create-body! screen :dynamic :set-transform x y 0 :create-fixture)))
+       (fixture-def :density 1 :friction 0 :restitution 1 :shape)
+       (create-body! screen (body-def :dynamic)
+                     :set-transform x y 0 :create-fixture)))
 
 (defn create-rect-body!
   [screen x y width height]
@@ -25,8 +27,29 @@
         0 0]
        float-array
        (chain :create-chain)
-       (fixture :density 1 :shape)
-       (create-body! screen :static :set-transform x y 0 :create-fixture)))
+       (fixture-def :density 1 :shape)
+       (create-body! screen (body-def :static)
+                     :set-transform x y 0 :create-fixture)))
+
+(defn create-ball-entity!
+  [screen]
+  (let [ball (texture "ball.png")
+        x (/ 100 pixels-per-tile)
+        y (/ 100 pixels-per-tile)
+        width (/ (texture! ball :get-region-width) pixels-per-tile)
+        height (/ (texture! ball :get-region-height) pixels-per-tile)]
+    (assoc ball
+           :body (doto (create-ball-body! screen x y (/ width 2))
+                   (body! :set-linear-velocity 10 10))
+           :x x :y y
+           :width width :height height)))
+
+(defn create-rect-entity!
+  [screen block x y width height]
+  (assoc block
+         :body (create-rect-body! screen x y width height)
+         :x 0 :y 0
+         :width width :height height))
 
 (defn move-paddle!
   [entities]
@@ -43,42 +66,36 @@
           game-w (/ (game :width) pixels-per-tile)
           game-h (/ (game :height) pixels-per-tile)
           floor-h (/ 1 pixels-per-tile)
-          ball (texture "ball.png")
-          ball-x (/ 100 pixels-per-tile)
-          ball-y (/ 100 pixels-per-tile)
-          ball-w (/ (texture! ball :get-region-width) pixels-per-tile)
-          ball-h (/ (texture! ball :get-region-height) pixels-per-tile)
           block (texture "block.png")
           block-w (/ (texture! block :get-region-width) pixels-per-tile)
           block-h (/ (texture! block :get-region-height) pixels-per-tile)
           block-cols (int (/ game-w block-w))
-          block-rows (int (/ game-h 2 block-h))]
+          block-rows (int (/ game-h 2 block-h))
+          ball (create-ball-entity! screen)
+          paddle (create-rect-entity! screen block 0 0 block-w block-h)
+          wall {:body (create-rect-body! screen 0 0 game-w game-h)}
+          floor {:body (create-rect-body! screen 0 0 game-w floor-h)}]
       ; set the screen width in tiles
       (width! screen game-w)
+      ; attach the ball to the paddle so it can't reach the blocks
+      ; (this is only meant to test that joints work)
+      (comment create-joint! screen
+               (joint-def :rope
+                          :body-a (:body ball)
+                          :body-b (:body paddle)
+                          :max-length 5
+                          :collide-connected true))
       ; return the entities
-      [(assoc ball
-              :ball? true
-              :body (doto (create-ball-body! screen ball-x ball-y (/ ball-w 2))
-                      (body! :set-linear-velocity 10 10))
-              :x ball-x :y ball-y
-              :width ball-w :height ball-h)
-       (assoc block
-              :paddle? true
-              :body (create-rect-body! screen 0 0 block-w block-h)
-              :x 0 :y 0
-              :width block-w
-              :height block-h)
-       {:wall? true :body (create-rect-body! screen 0 0 game-w game-h)}
-       {:floor? true :body (create-rect-body! screen 0 0 game-w floor-h)}
+      [(assoc ball :ball? true)
+       (assoc paddle :paddle? true)
+       (assoc wall :wall? true)
+       (assoc floor :floor? true)
        (for [col (range block-cols)
              row (range block-rows)
              :let [x (* col block-w)
                    y (+ (* row block-h) (- game-h (* block-h block-rows)))]]
-         (assoc block
-                :block? true
-                :body (create-rect-body! screen x y block-w block-h)
-                :x x :y y
-                :width block-w :height block-h))]))
+         (assoc (create-rect-entity! screen block x y block-w block-h)
+                :block? true))]))
   :on-render
   (fn [screen entities]
     (clear!)
