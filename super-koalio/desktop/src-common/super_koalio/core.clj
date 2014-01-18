@@ -1,3 +1,5 @@
+(set! *warn-on-reflection* true)
+
 (ns super-koalio.core
   (:require [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]

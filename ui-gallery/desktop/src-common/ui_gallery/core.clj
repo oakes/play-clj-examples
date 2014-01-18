@@ -1,3 +1,5 @@
+(set! *warn-on-reflection* true)
+
 (ns ui-gallery.core
   (:require [play-clj.core :refer :all]
             [play-clj.ui :refer :all]))
