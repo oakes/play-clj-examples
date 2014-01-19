@@ -9,9 +9,7 @@
   (fn [screen entities]
     (update! screen :camera (orthographic) :renderer (stage))
     (let [ui-skin (skin "uiskin.json")]
-      (table [(check-box "I'm a check box" ui-skin)
-              :row
-              (dialog "I'm a dialog" ui-skin :text "This is my content")
+      (table [(dialog "I'm a dialog" ui-skin :text "This is my content")
               :row
               [(image "clojure.png")
                :width 100
@@ -23,6 +21,8 @@
                            "I am too"
                            "So am I"]
                           ui-skin)
+              :row
+              (check-box "I'm a check box" ui-skin)
               :row
               (label "I'm a label" ui-skin)
               :row
