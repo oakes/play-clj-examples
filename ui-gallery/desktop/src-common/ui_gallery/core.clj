@@ -36,8 +36,7 @@
   :on-render
   (fn [screen entities]
     (clear!)
-    (render! screen)
-    (draw! screen entities))
+    (render! screen entities))
   :on-resize
   (fn [screen entities]
     (height! screen 400)
