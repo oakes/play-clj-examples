@@ -86,14 +86,14 @@
         (= keycode (key-code :space))
         (e/attack entities me))))
   :on-touch-down
-  (fn [{:keys [screen-x screen-y]} entities]
+  (fn [{:keys [x y]} entities]
     (let [entity (->> entities (filter :is-me?) first)
           min-x (/ (game :width) 3)
           max-x (* (game :width) (/ 2 3))
           min-y (/ (game :height) 3)
           max-y (* (game :height) (/ 2 3))]
       (cond
-        (and (< min-x screen-x max-x) (< min-y screen-y max-y))
+        (and (< min-x x max-x) (< min-y y max-y))
         (e/attack entity entities)))))
 
 (defscreen text-screen
