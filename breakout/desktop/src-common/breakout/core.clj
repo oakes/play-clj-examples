@@ -134,8 +134,7 @@
          (render! screen)))
   :on-resize
   (fn [screen entities]
-    (height! screen 300)
-    nil))
+    (height! screen 300)))
 
 (defgame breakout
   :on-create
