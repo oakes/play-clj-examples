@@ -14,6 +14,15 @@
       (position! screen x y)))
   entities)
 
+(defn render-or-not!
+  [screen entities]
+  (render! screen (remove #(= 0 (:draw-count %)) entities))
+  (map (fn [{:keys [draw-count] :as e}]
+         (if (and draw-count (> draw-count 0))
+           (assoc e :draw-count (dec draw-count))
+           e))
+       entities))
+
 (defscreen main-screen
   :on-show
   (fn [screen entities]
@@ -30,9 +39,19 @@
                          (texture (aget tiles 7 col)))
           tree-image (texture sheet :set-region 0 8 16 16)
           cactus-image (texture sheet :set-region 16 8 16 16)
-          attack-image (texture sheet :set-region 32 8 16 16)]
+          attack-down-image (texture sheet :set-region 48 0 16 8)
+          attack-right-image (texture sheet :set-region 32 8 8 16)
+          attack-images [attack-down-image
+                         (texture attack-down-image :flip false true)
+                         attack-right-image
+                         attack-right-image]
+          hit-image (texture sheet :set-region 40 8 16 16)]
       (->> (pvalues
-             (apply e/create "grass" attack-image player-images)
+             (assoc (apply e/create "grass" player-images) :is-me? true)
+             (assoc (apply e/create nil attack-images)
+                    :attack? true :draw-count 0)
+             (assoc (e/create nil hit-image)
+                    :hit? true :draw-count 0)
              (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
              (take 5 (repeatedly #(apply e/create "grass" slime-images)))
              (take 20 (repeatedly #(e/create "grass" tree-image)))
@@ -50,9 +69,11 @@
                  (->> entity
                       (e/move screen)
                       (e/animate screen)
+                      (e/animate-attack screen entities)
+                      (e/animate-hit entities)
                       (e/prevent-move (remove #(= % entity) entities)))))
          e/order-by-latitude
-         (render! screen)
+         (render-or-not! screen)
          (update-screen! screen)))
   :on-resize
   (fn [screen entities]
@@ -60,10 +81,10 @@
     nil)
   :on-key-down
   (fn [{:keys [keycode]} entities]
-    (let [entity (->> entities (filter :is-me?) first)]
+    (when-let [me (->> entities (filter :is-me?) first)]
       (cond
         (= keycode (key-code :space))
-        (e/attack entities entity))))
+        (e/attack entities me))))
   :on-touch-down
   (fn [{:keys [screen-x screen-y]} entities]
     (let [entity (->> entities (filter :is-me?) first)

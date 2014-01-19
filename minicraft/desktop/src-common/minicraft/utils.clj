@@ -10,6 +10,7 @@
 (def ^:const map-width 50)
 (def ^:const map-height 50)
 (def ^:const background-layer "grass")
+(def ^:const draw-count 30)
 
 (defn decelerate
   [velocity]
@@ -89,8 +90,9 @@
        nil?))
 
 (defn is-near-entity?
-  [{:keys [x y object] :as e} e2 min-distance]
-  (and (not= object (:object e2))
+  [{:keys [x y id] :as e} e2 min-distance]
+  (and (not= id (:id e2))
+       (nil? (:draw-count e2))
        (< (Math/abs ^double (- x (:x e2))) min-distance)
        (< (Math/abs ^double (- y (:y e2))) min-distance)))
 
@@ -102,3 +104,7 @@
   [screen entities entity]
   (or (not (is-on-start-layer? screen entity))
       (is-near-entities? entities entity (:min-distance entity))))
+
+(defn find-id
+  [entities id]
+  (some #(if (= id (:id %)) %) entities))

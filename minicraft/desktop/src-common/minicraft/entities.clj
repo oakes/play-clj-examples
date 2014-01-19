@@ -12,7 +12,8 @@
            :y-velocity 0
            :start-layer start-layer
            :min-distance 2
-           :health 6))
+           :health 6
+           :direction :down))
   ([start-layer down up] ; slimes
     (let [anim (animation u/duration [down up])]
       (assoc (create start-layer down)
@@ -22,7 +23,7 @@
              :left anim
              :min-distance 10
              :health 8)))
-  ([start-layer down up stand-right walk-right] ; zombies
+  ([start-layer down up stand-right walk-right] ; player and zombies
     (let [down-flip (texture down :flip true false)
           up-flip (texture up :flip true false)
           stand-flip (texture stand-right :flip true false)
@@ -33,12 +34,7 @@
              :right (animation u/duration [stand-right walk-right])
              :left (animation u/duration [stand-flip walk-flip])
              :min-distance 10
-             :health 10)))
-  ([start-layer attack down up stand-right walk-right] ; player
-    (assoc (create start-layer down up stand-right walk-right)
-           :is-me? true
-           :attack-right attack
-           :attack-left (texture attack :flip true false))))
+             :health 10))))
 
 (defn move
   [{:keys [delta-time]} {:keys [x y] :as entity}]
@@ -83,10 +79,53 @@
        (animate-water screen)
        update-texture-size))
 
+(defn ^:private is-not-victim?
+  [{:keys [x y] :as attacker} victim]
+  (or (not (u/is-near-entity? attacker victim 1.5))
+      (case (:direction attacker)
+        :down (< (- y (:y victim)) 0) ; victim is up
+        :up (> (- y (:y victim)) 0) ; victim is down
+        :right (> (- x (:x victim)) 0) ; victim is left
+        :left (< (- x (:x victim)) 0) ; victim is right
+        false)))
+
 (defn attack
   [entities entity]
-  (let [close-entities (filter #(u/is-near-entity? entity % 1.5) entities)]
-    (println (count close-entities))))
+  (let [victim (first (drop-while #(is-not-victim? entity %) entities))]
+    (map (fn [e]
+           (cond
+             (:attack? e)
+             (assoc e :draw-count u/draw-count :id-2 (:id entity))
+             (:hit? e)
+             (assoc e :draw-count (if victim u/draw-count 0) :id-2 (:id victim))
+             :else
+             e))
+         entities)))
+
+(defn animate-attack
+  [screen entities entity]
+  (if (:attack? entity)
+    (if-let [{:keys [x y direction]} (u/find-id entities (:id-2 entity))]
+      (merge entity
+             (animation->texture screen (get entity direction))
+             {:x (case direction
+                   :right (+ x 2)
+                   :left (- x 1)
+                   x)
+              :y (case direction
+                   :down (- y 1)
+                   :up (+ y 2)
+                   y)})
+      entity)
+    entity))
+
+(defn animate-hit
+  [entities entity]
+  (if (:hit? entity)
+    (if-let [{:keys [x y]} (u/find-id entities (:id-2 entity))]
+      (assoc entity :x x :y y)
+      entity)
+    entity))
 
 (defn randomize-location
   [screen entities {:keys [width height] :as entity}]
@@ -96,7 +135,7 @@
        shuffle
        (drop-while #(u/is-invalid-location? screen entities (merge entity %)))
        first
-       (merge entity)))
+       (merge entity {:id (count entities)})))
 
 (defn prevent-move
   [entities {:keys [x y x-change y-change] :as entity}]
