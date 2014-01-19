@@ -9,9 +9,7 @@
   (fn [screen entities]
     (update! screen :camera (orthographic) :renderer (stage))
     (let [ui-skin (skin "uiskin.json")]
-      (table [(dialog "I'm a dialog" ui-skin :text "This is my content")
-              :row
-              [(image "clojure.png")
+      (table [[(image "clojure.png")
                :width 100
                :height 100
                :space-top 20
