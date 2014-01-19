@@ -1,6 +1,6 @@
 ## Introduction
 
-A play-clj game based on a Ludum Date entry by Notch.
+A play-clj game based on a Ludum Dare entry by Notch.
 
 ## Contents
 
