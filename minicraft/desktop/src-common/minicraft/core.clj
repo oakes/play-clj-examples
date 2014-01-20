@@ -15,11 +15,13 @@
   entities)
 
 (defn render-or-not!
-  [screen entities]
-  (render! screen (remove #(= 0 (:draw-count %)) entities))
-  (map (fn [{:keys [draw-count] :as e}]
-         (if (and draw-count (> draw-count 0))
-           (assoc e :draw-count (dec draw-count))
+  [{:keys [delta-time] :as screen} entities]
+  ; only render the entities whose :draw-time is not zero, and if it is above
+  ; zero, decrements the :draw-time by the screen's :delta-time
+  (render! screen (remove #(= 0 (:draw-time %)) entities))
+  (map (fn [{:keys [draw-time] :as e}]
+         (if (and draw-time (> draw-time 0))
+           (assoc e :draw-time (max 0 (- draw-time delta-time)))
            e))
        entities))
 
@@ -49,9 +51,9 @@
       (->> (pvalues
              (assoc (apply e/create "grass" player-images) :is-me? true)
              (assoc (apply e/create nil attack-images)
-                    :attack? true :draw-count 0)
+                    :attack? true :draw-time 0)
              (assoc (e/create nil hit-image)
-                    :hit? true :draw-count 0)
+                    :hit? true :draw-time 0)
              (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
              (take 5 (repeatedly #(apply e/create "grass" slime-images)))
              (take 20 (repeatedly #(e/create "grass" tree-image)))
@@ -94,7 +96,7 @@
           max-y (* (game :height) (/ 2 3))]
       (cond
         (and (< min-x x max-x) (< min-y y max-y))
-        (e/attack entity entities)))))
+        (e/attack entities entity)))))
 
 (defscreen text-screen
   :on-show

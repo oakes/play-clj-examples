@@ -83,10 +83,10 @@
   [{:keys [x y] :as attacker} victim]
   (or (not (u/is-near-entity? attacker victim 1.5))
       (case (:direction attacker)
-        :down (< (- y (:y victim)) 0) ; victim is up
-        :up (> (- y (:y victim)) 0) ; victim is down
-        :right (> (- x (:x victim)) 0) ; victim is left
-        :left (< (- x (:x victim)) 0) ; victim is right
+        :down (< (- y (:y victim)) 0) ; victim is up?
+        :up (> (- y (:y victim)) 0) ; victim is down?
+        :right (> (- x (:x victim)) 0) ; victim is left?
+        :left (< (- x (:x victim)) 0) ; victim is right?
         false)))
 
 (defn attack
@@ -95,9 +95,9 @@
     (map (fn [e]
            (cond
              (:attack? e)
-             (assoc e :draw-count u/draw-count :id-2 (:id entity))
+             (assoc e :draw-time u/draw-time :id-2 (:id entity))
              (:hit? e)
-             (assoc e :draw-count (if victim u/draw-count 0) :id-2 (:id victim))
+             (assoc e :draw-time (if victim u/draw-time 0) :id-2 (:id victim))
              :else
              e))
          entities)))
