@@ -23,7 +23,8 @@
              :left anim
              :min-distance 10
              :health 8
-             :damage 2)))
+             :damage 2
+             :npc? true)))
   ([start-layer down up stand-right walk-right] ; player and zombies
     (let [down-flip (texture down :flip true false)
           up-flip (texture up :flip true false)
@@ -36,12 +37,12 @@
              :left (animation u/duration [stand-flip walk-flip])
              :min-distance 10
              :health 10
-             :damage 4))))
+             :damage 4
+             :npc? true))))
 
 (defn move
-  [{:keys [delta-time]} {:keys [x y] :as entity}]
-  (let [x-velocity (u/get-x-velocity entity)
-        y-velocity (u/get-y-velocity entity)
+  [{:keys [delta-time]} entities {:keys [x y] :as entity}]
+  (let [[x-velocity y-velocity] (u/get-velocity entities entity)
         x-change (* x-velocity delta-time)
         y-change (* y-velocity delta-time)]
     (if (or (not= 0 x-change) (not= 0 y-change))
@@ -57,9 +58,11 @@
 (defn ^:private animate-direction
   [screen entity]
   (if-let [direction (u/get-direction entity)]
-    (merge entity
-           (animation->texture screen (get entity direction))
-           {:direction direction})
+    (if-let [anim (get entity direction)]
+      (merge entity
+             (animation->texture screen anim)
+             {:direction direction})
+      entity)
     entity))
 
 (defn ^:private animate-water

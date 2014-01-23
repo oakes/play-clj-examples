@@ -20,7 +20,7 @@
   (render! screen (remove #(or (= 0 (:draw-time %))
                                (<= (:health %) 0))
                           entities))
-  ;and :draw-time is above zero, decrement it by the screen's :delta-time
+  ; if :draw-time is above zero, decrement it by the screen's :delta-time
   (map (fn [{:keys [draw-time] :as e}]
          (if (and draw-time (> draw-time 0))
            (assoc e :draw-time (max 0 (- draw-time delta-time)))
@@ -30,8 +30,8 @@
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-    (let [unit-scale (/ 1 u/pixels-per-tile)
-          screen (->> (orthogonal-tiled-map "level1.tmx" unit-scale)
+    (let [screen (->> (/ 1 u/pixels-per-tile)
+                      (orthogonal-tiled-map "level1.tmx")
                       (update! screen :camera (orthographic) :renderer))
           sheet (texture "tiles.png")
           tiles (texture! sheet :split 16 16)
@@ -71,7 +71,7 @@
     (->> entities
          (pmap (fn [entity]
                  (->> entity
-                      (e/move screen)
+                      (e/move screen entities)
                       (e/animate screen)
                       (e/animate-attack screen entities)
                       (e/animate-hit entities)

@@ -12,56 +12,6 @@
 (def ^:const background-layer "grass")
 (def ^:const draw-time 0.2)
 
-(defn decelerate
-  [velocity]
-  (let [velocity (* velocity deceleration)]
-    (if (< (Math/abs velocity) damping)
-      0
-      velocity)))
-
-(defn ^:private is-touched?
-  [key]
-  (and (game :is-touched?)
-       (case key
-         :down (> (game :y) (* (game :height) (/ 2 3)))
-         :up (< (game :y) (/ (game :height) 3))
-         :left (< (game :x) (/ (game :width) 3))
-         :right (> (game :x) (* (game :width) (/ 2 3)))
-         false)))
-
-(defn get-x-velocity
-  [{:keys [is-me? x-velocity]}]
-  (if is-me?
-    (cond
-      (or (is-pressed? :dpad-left) (is-touched? :left))
-      (* -1 max-velocity)
-      (or (is-pressed? :dpad-right) (is-touched? :right))
-      max-velocity
-      :else
-      x-velocity)
-    x-velocity))
-
-(defn get-y-velocity
-  [{:keys [is-me? y-velocity]}]
-  (if is-me?
-    (cond
-      (or (is-pressed? :dpad-down) (is-touched? :down))
-      (* -1 max-velocity)
-      (or (is-pressed? :dpad-up) (is-touched? :up))
-      max-velocity
-      :else
-      y-velocity)
-    y-velocity))
-
-(defn get-direction
-  [{:keys [x-velocity y-velocity]}]
-  (cond
-    (not= y-velocity 0)
-    (if (> y-velocity 0) :up :down)
-    (not= x-velocity 0)
-    (if (> x-velocity 0) :right :left)
-    :else nil))
-
 (defn is-on-layer?
   [screen {:keys [x y width height]} & layer-names]
   (let [layers (map #(tiled-map-layer screen %) layer-names)]
@@ -105,6 +55,63 @@
   [screen entities entity]
   (or (not (is-on-start-layer? screen entity))
       (is-near-entities? entities entity (:min-distance entity))))
+
+(defn decelerate
+  [velocity]
+  (let [velocity (* velocity deceleration)]
+    (if (< (Math/abs velocity) damping)
+      0
+      velocity)))
+
+(defn ^:private is-touched?
+  [key]
+  (and (game :is-touched?)
+       (case key
+         :down (> (game :y) (* (game :height) (/ 2 3)))
+         :up (< (game :y) (/ (game :height) 3))
+         :left (< (game :x) (/ (game :width) 3))
+         :right (> (game :x) (* (game :width) (/ 2 3)))
+         false)))
+
+(defn ^:private move-npc
+  [entities entity])
+
+(defn ^:private get-player-velocity
+  [{:keys [x-velocity y-velocity]}]
+  [(cond
+     (or (is-pressed? :dpad-left) (is-touched? :left))
+     (* -1 max-velocity)
+     (or (is-pressed? :dpad-right) (is-touched? :right))
+     max-velocity
+     :else
+     x-velocity)
+   (cond
+     (or (is-pressed? :dpad-down) (is-touched? :down))
+     (* -1 max-velocity)
+     (or (is-pressed? :dpad-up) (is-touched? :up))
+     max-velocity
+     :else
+     y-velocity)])
+
+(defn ^:private get-npc-velocity
+  [entities entity]
+  [0 0])
+
+(defn get-velocity
+  [entities {:keys [is-me? npc?] :as entity}]
+  (cond
+    is-me? (get-player-velocity entity)
+    npc? (get-npc-velocity entities entity)
+    :else [0 0]))
+
+(defn get-direction
+  [{:keys [x-velocity y-velocity]}]
+  (cond
+    (not= y-velocity 0)
+    (if (> y-velocity 0) :up :down)
+    (not= x-velocity 0)
+    (if (> x-velocity 0) :right :left)
+    :else nil))
 
 (defn find-id
   [entities id]
