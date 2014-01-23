@@ -10,7 +10,7 @@
 (def ^:const map-width 50)
 (def ^:const map-height 50)
 (def ^:const background-layer "grass")
-(def ^:const draw-time 0.5)
+(def ^:const draw-time 0.2)
 
 (defn decelerate
   [velocity]
@@ -93,6 +93,7 @@
   [{:keys [x y id] :as e} e2 min-distance]
   (and (not= id (:id e2))
        (nil? (:draw-time e2))
+       (> (:health e2) 0)
        (< (Math/abs ^double (- x (:x e2))) min-distance)
        (< (Math/abs ^double (- y (:y e2))) min-distance)))
 

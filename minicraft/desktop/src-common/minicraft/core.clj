@@ -16,9 +16,11 @@
 
 (defn render-or-not!
   [{:keys [delta-time] :as screen} entities]
-  ; only render the entities whose :draw-time is not zero, and if it is above
-  ; zero, decrements the :draw-time by the screen's :delta-time
-  (render! screen (remove #(= 0 (:draw-time %)) entities))
+  ; only render the entities whose :draw-time not= 0 and :health is > 0
+  (render! screen (remove #(or (= 0 (:draw-time %))
+                               (<= (:health %) 0))
+                          entities))
+  ;and :draw-time is above zero, decrement it by the screen's :delta-time
   (map (fn [{:keys [draw-time] :as e}]
          (if (and draw-time (> draw-time 0))
            (assoc e :draw-time (max 0 (- draw-time delta-time)))

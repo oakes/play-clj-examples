@@ -22,7 +22,8 @@
              :right anim
              :left anim
              :min-distance 10
-             :health 8)))
+             :health 8
+             :damage 2)))
   ([start-layer down up stand-right walk-right] ; player and zombies
     (let [down-flip (texture down :flip true false)
           up-flip (texture up :flip true false)
@@ -34,7 +35,8 @@
              :right (animation u/duration [stand-right walk-right])
              :left (animation u/duration [stand-flip walk-flip])
              :min-distance 10
-             :health 10))))
+             :health 10
+             :damage 4))))
 
 (defn move
   [{:keys [delta-time]} {:keys [x y] :as entity}]
@@ -98,6 +100,8 @@
              (assoc e :draw-time u/draw-time :id-2 (:id entity))
              (:hit? e)
              (assoc e :draw-time (if victim u/draw-time 0) :id-2 (:id victim))
+             (= e victim)
+             (assoc e :health (max 0 (- (:health e) (:damage entity))))
              :else
              e))
          entities)))
@@ -152,4 +156,4 @@
 
 (defn order-by-latitude
   [entities]
-  (sort #(if (> (:y %1) (:y %2)) -1 1) entities))
+  (sort #(if (or (:hit? %1) (< (:y %1) (:y %2))) 1 -1) entities))
