@@ -73,9 +73,6 @@
          :right (> (game :x) (* (game :width) (/ 2 3)))
          false)))
 
-(defn ^:private move-npc
-  [entities entity])
-
 (defn ^:private get-player-velocity
   [{:keys [x-velocity y-velocity]}]
   [(cond
