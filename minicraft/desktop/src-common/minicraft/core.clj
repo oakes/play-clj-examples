@@ -88,11 +88,11 @@
                       (e/animate screen)
                       (e/animate-attack screen entities)
                       (e/animate-hit entities)
-                      (e/prevent-move (remove #(= % entity) entities)))))
-         play-sounds!
+                      (e/prevent-move (remove #(= % entity) entities))
+                      (e/adjust-times screen))))
          u/order-by-latitude
+         play-sounds!
          (render-if-necessary! screen)
-         (u/adjust-draw-time screen)
          (update-screen! screen)))
   :on-resize
   (fn [screen entities]

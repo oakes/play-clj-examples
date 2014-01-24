@@ -6,11 +6,15 @@
 (def ^:const duration 0.2)
 (def ^:const damping 0.5)
 (def ^:const max-velocity 5)
+(def ^:const max-velocity-npc 3)
 (def ^:const deceleration 0.9)
 (def ^:const map-width 50)
 (def ^:const map-height 50)
 (def ^:const background-layer "grass")
-(def ^:const draw-time 0.2)
+(def ^:const max-draw-time 0.2)
+(def ^:const max-attack-time 1)
+(def ^:const aggro-distance 6)
+(def ^:const attack-distance 1.5)
 
 (defn is-on-layer?
   [screen {:keys [x y width height]} & layer-names]
@@ -90,9 +94,24 @@
      :else
      y-velocity)])
 
+(defn ^:private get-npc-aggro-velocity
+  [npc me axis]
+  (let [diff (- (get npc axis) (get me axis))]
+    (cond
+      (> diff attack-distance) (* -1 max-velocity-npc)
+      (< diff (* -1 attack-distance)) max-velocity-npc
+      :else 0)))
+
 (defn ^:private get-npc-velocity
-  [entities entity]
-  [0 0])
+  [entities {:keys [attack-time x y x-velocity y-velocity] :as entity}]
+  (let [me (some #(if (:me? %) %) entities)]
+    (if (is-near-entity? entity me aggro-distance)
+      [(get-npc-aggro-velocity entity me :x)
+       (get-npc-aggro-velocity entity me :y)]
+      (if (= attack-time 0)
+        [(* max-velocity-npc (- (rand-int 3) 1))
+         (* max-velocity-npc (- (rand-int 3) 1))]
+        [x-velocity y-velocity]))))
 
 (defn get-velocity
   [entities {:keys [me? npc?] :as entity}]
@@ -117,12 +136,3 @@
 (defn order-by-latitude
   [entities]
   (sort #(if (or (:hit? %1) (< (:y %1) (:y %2))) 1 -1) entities))
-
-(defn adjust-draw-time
-  [{:keys [delta-time]} entities]
-  ; if :draw-time is above zero, decrement it by the screen's :delta-time
-  (map (fn [{:keys [draw-time] :as e}]
-         (if (and draw-time (> draw-time 0))
-           (assoc e :draw-time (max 0 (- draw-time delta-time)))
-           e))
-       entities))

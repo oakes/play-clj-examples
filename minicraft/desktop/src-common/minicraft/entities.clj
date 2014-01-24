@@ -24,6 +24,7 @@
              :min-distance 10
              :health 8
              :damage 2
+             :attack-time 0
              :npc? true)))
   ([start-layer down up stand-right walk-right] ; player and zombies
     (let [down-flip (texture down :flip true false)
@@ -38,6 +39,7 @@
              :min-distance 10
              :health 10
              :damage 4
+             :attack-time 0
              :npc? true))))
 
 (defn move
@@ -100,9 +102,13 @@
     (map (fn [e]
            (cond
              (:attack? e)
-             (assoc e :draw-time u/draw-time :id-2 (:id entity))
+             (assoc e
+                    :draw-time u/max-draw-time
+                    :id-2 (:id entity))
              (:hit? e)
-             (assoc e :draw-time (if victim u/draw-time 0) :id-2 (:id victim))
+             (assoc e
+                    :draw-time (if victim u/max-draw-time 0)
+                    :id-2 (:id victim))
              (= e victim)
              (assoc e
                     :play-sound (:hurt-sound victim)
@@ -158,3 +164,14 @@
            :x (- x x-change)
            :y (- y y-change))
     entity))
+
+(defn adjust-times
+  [{:keys [delta-time]} {:keys [draw-time attack-time] :as entity}]
+  ; if times are > zero, reduce them by the screen's :delta-time
+  (conj entity
+        (when draw-time
+          [:draw-time (max 0 (- draw-time delta-time))])
+        (when attack-time
+          [:attack-time (if (> attack-time 0)
+                          (max 0 (- attack-time delta-time))
+                          u/max-attack-time)])))
