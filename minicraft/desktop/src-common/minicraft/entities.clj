@@ -214,6 +214,10 @@
 (defn prevent-move
   [entities {:keys [x y x-change y-change health] :as entity}]
   (if (or (= health 0)
+          (< x 0)
+          (> x (- u/map-width 1))
+          (< y 0)
+          (> y (- u/map-height 1))
           (and (or (not= 0 x-change) (not= 0 y-change))
                (u/is-near-entities? entities entity 1)))
     (assoc entity
