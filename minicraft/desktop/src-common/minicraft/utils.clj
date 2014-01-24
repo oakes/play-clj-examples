@@ -113,3 +113,16 @@
 (defn find-id
   [entities id]
   (some #(if (= id (:id %)) %) entities))
+
+(defn order-by-latitude
+  [entities]
+  (sort #(if (or (:hit? %1) (< (:y %1) (:y %2))) 1 -1) entities))
+
+(defn adjust-draw-time
+  [{:keys [delta-time]} entities]
+  ; if :draw-time is above zero, decrement it by the screen's :delta-time
+  (map (fn [{:keys [draw-time] :as e}]
+         (if (and draw-time (> draw-time 0))
+           (assoc e :draw-time (max 0 (- draw-time delta-time)))
+           e))
+       entities))

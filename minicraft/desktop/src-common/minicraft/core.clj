@@ -14,18 +14,13 @@
       (position! screen x y)))
   entities)
 
-(defn render-or-not!
-  [{:keys [delta-time] :as screen} entities]
+(defn render-if-necessary!
+  [screen entities]
   ; only render the entities whose :draw-time not= 0 and :health is > 0
   (render! screen (remove #(or (= 0 (:draw-time %))
                                (<= (:health %) 0))
                           entities))
-  ; if :draw-time is above zero, decrement it by the screen's :delta-time
-  (map (fn [{:keys [draw-time] :as e}]
-         (if (and draw-time (> draw-time 0))
-           (assoc e :draw-time (max 0 (- draw-time delta-time)))
-           e))
-       entities))
+  entities)
 
 (defscreen main-screen
   :on-show
@@ -76,8 +71,9 @@
                       (e/animate-attack screen entities)
                       (e/animate-hit entities)
                       (e/prevent-move (remove #(= % entity) entities)))))
-         e/order-by-latitude
-         (render-or-not! screen)
+         u/order-by-latitude
+         (render-if-necessary! screen)
+         (u/adjust-draw-time screen)
          (update-screen! screen)))
   :on-resize
   (fn [screen entities]

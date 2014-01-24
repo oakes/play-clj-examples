@@ -156,7 +156,3 @@
            :x (- x x-change)
            :y (- y y-change))
     entity))
-
-(defn order-by-latitude
-  [entities]
-  (sort #(if (or (:hit? %1) (< (:y %1) (:y %2))) 1 -1) entities))
