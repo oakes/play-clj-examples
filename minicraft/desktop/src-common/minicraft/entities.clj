@@ -3,7 +3,7 @@
             [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]))
 
-(defn create
+(defn ^:private create
   ([start-layer img] ; trees and cacti
     (assoc img
            :width 2
@@ -24,8 +24,7 @@
              :min-distance 10
              :health 8
              :damage 2
-             :attack-time 0
-             :npc? true)))
+             :attack-time 0)))
   ([start-layer down up stand-right walk-right] ; player and zombies
     (let [down-flip (texture down :flip true false)
           up-flip (texture up :flip true false)
@@ -39,8 +38,44 @@
              :min-distance 10
              :health 10
              :damage 4
-             :attack-time 0
-             :npc? true))))
+             :attack-time 0))))
+
+(defn create-tree
+  [img]
+  (assoc (create "grass" img)
+         :tree? true))
+
+(defn create-cactus
+  [img]
+  (assoc (create "desert" img)
+         :cactus? true))
+
+(defn create-hit
+  [img]
+  (assoc (create nil img)
+         :hit? true
+         :draw-time 0))
+
+(defn create-slime
+  [down up]
+  (assoc (create "grass" down up)
+         :npc? true))
+
+(defn create-attack
+  [down up stand-right walk-right]
+  (assoc (create nil down up stand-right walk-right)
+         :attack? true
+         :draw-time 0))
+
+(defn create-zombie
+  [down up stand-right walk-right]
+  (assoc (create "grass" down up stand-right walk-right)
+         :npc? true))
+
+(defn create-player
+  [down up stand-right walk-right]
+  (assoc (create "grass" down up stand-right walk-right)
+         :player? true))
 
 (defn move
   [{:keys [delta-time]} entities {:keys [x y] :as entity}]
@@ -87,9 +122,9 @@
        update-texture-size))
 
 (defn ^:private is-not-victim?
-  [{:keys [x y npc?] :as attacker} {:keys [me?] :as victim}]
+  [{:keys [x y npc?] :as attacker} {:keys [player?] :as victim}]
   (or (not (u/is-near-entity? attacker victim u/attack-distance))
-      (and npc? (not me?))
+      (not= npc? player?)
       (case (:direction attacker)
         :down (< (- y (:y victim)) 0) ; victim is up?
         :up (> (- y (:y victim)) 0) ; victim is down?
@@ -98,18 +133,18 @@
         false)))
 
 (defn attack
-  [entities entity]
-  (let [victim (first (drop-while #(is-not-victim? entity %) entities))]
+  [entities attacker]
+  (let [victim (first (drop-while #(is-not-victim? attacker %) entities))]
     (map (fn [e]
            (cond
              (:attack? e)
-             (if (:me? entity)
+             (if (:player? attacker)
                (assoc e
                       :draw-time u/max-draw-time
-                      :id-2 (:id entity))
+                      :id-2 (:id attacker))
                e)
              (:hit? e)
-             (if (:npc? victim)
+             (if-not (:player? victim)
                (assoc e
                       :draw-time (if victim u/max-draw-time 0)
                       :id-2 (:id victim))
@@ -117,20 +152,22 @@
              (= e victim)
              (assoc e
                     :play-sound (:hurt-sound victim)
-                    :health (max 0 (- (:health e) (:damage entity))))
+                    :health (max 0 (- (:health e) (:damage attacker))))
              :else
              e))
          entities)))
 
 (defn ^:private is-npc-attacker?
-  [{:keys [npc? attack-time] :as entity} me]
+  [{:keys [npc? health attack-time] :as npc} player]
   (and npc?
+       (> health 0)
        (= attack-time 0)
-       (u/is-near-entity? entity me u/attack-distance)))
+       (u/is-near-entity? npc player u/attack-distance)))
 
 (defn attack-player
   [entities]
-  (if-let [npc (some #(if (is-npc-attacker? % (u/get-me entities)) %) entities)]
+  (if-let [npc (some #(if (is-npc-attacker? % (u/get-player entities)) %)
+                     entities)]
     (attack entities npc)
     entities))
 
@@ -155,7 +192,8 @@
   [entities entity]
   (if (:hit? entity)
     (if-let [{:keys [x y]} (u/find-id entities (:id-2 entity))]
-      (assoc entity :x x :y y)
+      ; position the hit slightly below the victim so it appears on top
+      (assoc entity :x x :y (- y 0.1))
       entity)
     entity))
 

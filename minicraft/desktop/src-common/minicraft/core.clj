@@ -9,8 +9,8 @@
 
 (defn update-screen!
   [screen entities]
-  (doseq [{:keys [x y me?]} entities]
-    (when me?
+  (doseq [{:keys [x y player?]} entities]
+    (when player?
       (position! screen x y)))
   entities)
 
@@ -57,21 +57,16 @@
                          attack-right-image]
           hit-image (texture sheet :set-region 40 8 16 16)]
       (->> (pvalues
-             (assoc (apply e/create "grass" player-images)
-                    :me? true
+             (assoc (apply e/create-player player-images)
                     :hurt-sound hurt-sound-1
                     :death-sound death-sound
                     :play-sound start-sound)
-             (assoc (apply e/create nil attack-images)
-                    :attack? true
-                    :draw-time 0)
-             (assoc (e/create nil hit-image)
-                    :hit? true
-                    :draw-time 0)
-             (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
-             (take 5 (repeatedly #(apply e/create "grass" slime-images)))
-             (take 20 (repeatedly #(e/create "grass" tree-image)))
-             (take 10 (repeatedly #(e/create "desert" cactus-image))))
+             (apply e/create-attack attack-images)
+             (e/create-hit hit-image)
+             (take 5 (repeat (apply e/create-zombie zombie-images)))
+             (take 5 (repeat (apply e/create-slime slime-images)))
+             (take 20 (repeat (e/create-tree tree-image)))
+             (take 10 (repeat (e/create-cactus cactus-image))))
            flatten
            (map #(if-not (:hurt-sound %) (assoc % :hurt-sound hurt-sound-2) %))
            (reduce
@@ -101,20 +96,20 @@
     nil)
   :on-key-down
   (fn [{:keys [keycode]} entities]
-    (when-let [me (->> entities (filter :me?) first)]
+    (when-let [player (u/get-player entities)]
       (cond
         (= keycode (key-code :space))
-        (e/attack entities me))))
+        (e/attack entities player))))
   :on-touch-down
   (fn [{:keys [x y]} entities]
-    (let [entity (->> entities (filter :me?) first)
+    (let [player (u/get-player entities)
           min-x (/ (game :width) 3)
           max-x (* (game :width) (/ 2 3))
           min-y (/ (game :height) 3)
           max-y (* (game :height) (/ 2 3))]
       (cond
         (and (< min-x x max-x) (< min-y y max-y))
-        (e/attack entities entity)))))
+        (e/attack entities player)))))
 
 (defscreen text-screen
   :on-show
