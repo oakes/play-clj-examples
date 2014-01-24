@@ -90,6 +90,7 @@
                       (e/animate-hit entities)
                       (e/prevent-move (remove #(= % entity) entities))
                       (e/adjust-times screen))))
+         e/attack-player
          u/order-by-latitude
          play-sounds!
          (render-if-necessary! screen)

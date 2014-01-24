@@ -87,8 +87,9 @@
        update-texture-size))
 
 (defn ^:private is-not-victim?
-  [{:keys [x y] :as attacker} victim]
-  (or (not (u/is-near-entity? attacker victim 1.5))
+  [{:keys [x y npc?] :as attacker} {:keys [me?] :as victim}]
+  (or (not (u/is-near-entity? attacker victim u/attack-distance))
+      (and npc? (not me?))
       (case (:direction attacker)
         :down (< (- y (:y victim)) 0) ; victim is up?
         :up (> (- y (:y victim)) 0) ; victim is down?
@@ -102,13 +103,17 @@
     (map (fn [e]
            (cond
              (:attack? e)
-             (assoc e
-                    :draw-time u/max-draw-time
-                    :id-2 (:id entity))
+             (if (:me? entity)
+               (assoc e
+                      :draw-time u/max-draw-time
+                      :id-2 (:id entity))
+               e)
              (:hit? e)
-             (assoc e
-                    :draw-time (if victim u/max-draw-time 0)
-                    :id-2 (:id victim))
+             (if (:npc? victim)
+               (assoc e
+                      :draw-time (if victim u/max-draw-time 0)
+                      :id-2 (:id victim))
+               e)
              (= e victim)
              (assoc e
                     :play-sound (:hurt-sound victim)
@@ -116,6 +121,18 @@
              :else
              e))
          entities)))
+
+(defn ^:private is-npc-attacker?
+  [{:keys [npc? attack-time] :as entity} me]
+  (and npc?
+       (= attack-time 0)
+       (u/is-near-entity? entity me u/attack-distance)))
+
+(defn attack-player
+  [entities]
+  (if-let [npc (some #(if (is-npc-attacker? % (u/get-me entities)) %) entities)]
+    (attack entities npc)
+    entities))
 
 (defn animate-attack
   [screen entities entity]
