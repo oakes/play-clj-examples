@@ -95,9 +95,9 @@
   [0 0])
 
 (defn get-velocity
-  [entities {:keys [is-me? npc?] :as entity}]
+  [entities {:keys [me? npc?] :as entity}]
   (cond
-    is-me? (get-player-velocity entity)
+    me? (get-player-velocity entity)
     npc? (get-npc-velocity entities entity)
     :else [0 0]))
 

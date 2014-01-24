@@ -9,8 +9,8 @@
 
 (defn update-screen!
   [screen entities]
-  (doseq [{:keys [x y is-me?]} entities]
-    (when is-me?
+  (doseq [{:keys [x y me?]} entities]
+    (when me?
       (position! screen x y)))
   entities)
 
@@ -58,7 +58,7 @@
           hit-image (texture sheet :set-region 40 8 16 16)]
       (->> (pvalues
              (assoc (apply e/create "grass" player-images)
-                    :is-me? true
+                    :me? true
                     :hurt-sound hurt-sound-1
                     :death-sound death-sound
                     :play-sound start-sound)
@@ -100,13 +100,13 @@
     nil)
   :on-key-down
   (fn [{:keys [keycode]} entities]
-    (when-let [me (->> entities (filter :is-me?) first)]
+    (when-let [me (->> entities (filter :me?) first)]
       (cond
         (= keycode (key-code :space))
         (e/attack entities me))))
   :on-touch-down
   (fn [{:keys [x y]} entities]
-    (let [entity (->> entities (filter :is-me?) first)
+    (let [entity (->> entities (filter :me?) first)
           min-x (/ (game :width) 3)
           max-x (* (game :width) (/ 2 3))
           min-y (/ (game :height) 3)
