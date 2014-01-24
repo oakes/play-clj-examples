@@ -122,9 +122,10 @@
        update-texture-size))
 
 (defn ^:private is-not-victim?
-  [{:keys [x y npc?] :as attacker} {:keys [player?] :as victim}]
-  (or (not (u/is-near-entity? attacker victim u/attack-distance))
+  [{:keys [x y health npc?] :as attacker} {:keys [player?] :as victim}]
+  (or (= health 0)
       (not= npc? player?)
+      (not (u/is-near-entity? attacker victim u/attack-distance))
       (case (:direction attacker)
         :down (< (- y (:y victim)) 0) ; victim is up?
         :up (> (- y (:y victim)) 0) ; victim is down?
@@ -150,9 +151,12 @@
                       :id-2 (:id victim))
                e)
              (= e victim)
-             (assoc e
-                    :play-sound (:hurt-sound victim)
-                    :health (max 0 (- (:health e) (:damage attacker))))
+             (let [health (max 0 (- (:health e) (:damage attacker)))]
+               (assoc e
+                      :play-sound (if (and (= health 0) (:death-sound victim))
+                                    (:death-sound victim)
+                                    (:hurt-sound victim))
+                      :health health))
              :else
              e))
          entities)))
@@ -208,9 +212,10 @@
        (merge entity {:id (count entities)})))
 
 (defn prevent-move
-  [entities {:keys [x y x-change y-change] :as entity}]
-  (if (and (or (not= 0 x-change) (not= 0 y-change))
-           (u/is-near-entities? entities entity 1))
+  [entities {:keys [x y x-change y-change health] :as entity}]
+  (if (or (= health 0)
+          (and (or (not= 0 x-change) (not= 0 y-change))
+               (u/is-near-entities? entities entity 1)))
     (assoc entity
            :x-velocity 0
            :y-velocity 0
