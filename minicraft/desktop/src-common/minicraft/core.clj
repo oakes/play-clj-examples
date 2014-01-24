@@ -22,6 +22,13 @@
                           entities))
   entities)
 
+(defn play-sounds!
+  [entities]
+  (doseq [{:keys [play-sound]} entities]
+    (when play-sound
+      (sound! play-sound :play)))
+  (map #(dissoc % :play-sound) entities))
+
 (defscreen main-screen
   :on-show
   (fn [screen entities]
@@ -30,6 +37,10 @@
                       (update! screen :camera (orthographic) :renderer))
           sheet (texture "tiles.png")
           tiles (texture! sheet :split 16 16)
+          start-sound (sound "test.wav")
+          hurt-sound-1 (sound "playerhurt.wav")
+          hurt-sound-2 (sound "monsterhurt.wav")
+          death-sound (sound "death.wav")
           player-images (for [col [0 1 2 3]]
                           (texture (aget tiles 6 col)))
           zombie-images (for [col [4 5 6 7]]
@@ -46,16 +57,23 @@
                          attack-right-image]
           hit-image (texture sheet :set-region 40 8 16 16)]
       (->> (pvalues
-             (assoc (apply e/create "grass" player-images) :is-me? true)
+             (assoc (apply e/create "grass" player-images)
+                    :is-me? true
+                    :hurt-sound hurt-sound-1
+                    :death-sound death-sound
+                    :play-sound start-sound)
              (assoc (apply e/create nil attack-images)
-                    :attack? true :draw-time 0)
+                    :attack? true
+                    :draw-time 0)
              (assoc (e/create nil hit-image)
-                    :hit? true :draw-time 0)
+                    :hit? true
+                    :draw-time 0)
              (take 5 (repeatedly #(apply e/create "grass" zombie-images)))
              (take 5 (repeatedly #(apply e/create "grass" slime-images)))
              (take 20 (repeatedly #(e/create "grass" tree-image)))
              (take 10 (repeatedly #(e/create "desert" cactus-image))))
            flatten
+           (map #(if-not (:hurt-sound %) (assoc % :hurt-sound hurt-sound-2) %))
            (reduce
              (fn [entities entity]
                (conj entities (e/randomize-location screen entities entity)))
@@ -71,6 +89,7 @@
                       (e/animate-attack screen entities)
                       (e/animate-hit entities)
                       (e/prevent-move (remove #(= % entity) entities)))))
+         play-sounds!
          u/order-by-latitude
          (render-if-necessary! screen)
          (u/adjust-draw-time screen)

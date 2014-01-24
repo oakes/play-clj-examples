@@ -104,7 +104,9 @@
              (:hit? e)
              (assoc e :draw-time (if victim u/draw-time 0) :id-2 (:id victim))
              (= e victim)
-             (assoc e :health (max 0 (- (:health e) (:damage entity))))
+             (assoc e
+                    :play-sound (:hurt-sound victim)
+                    :health (max 0 (- (:health e) (:damage entity))))
              :else
              e))
          entities)))
