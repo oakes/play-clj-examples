@@ -197,7 +197,7 @@
   (if (:hit? entity)
     (if-let [{:keys [x y]} (u/find-id entities (:id-2 entity))]
       ; position the hit slightly below the victim so it appears on top
-      (assoc entity :x x :y (- y 0.1))
+      (assoc entity :x x :y (- y 0.01))
       entity)
     entity))
 
