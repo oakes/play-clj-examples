@@ -139,7 +139,7 @@
     (map (fn [e]
            (cond
              (:attack? e)
-             (if (:player? attacker)
+             (if (and (:player? attacker) (not= (:health attacker) 0))
                (assoc e
                       :draw-time u/max-draw-time
                       :id-2 (:id attacker))
