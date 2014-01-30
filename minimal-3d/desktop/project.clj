@@ -1,9 +1,9 @@
 (defproject minimal-3d "0.0.1-SNAPSHOT"
   :description "FIXME: write description"
   
-  :dependencies [[com.badlogicgames.gdx/gdx "1.0-SNAPSHOT"]
-                 [com.badlogicgames.gdx/gdx-backend-lwjgl "1.0-SNAPSHOT"]
-                 [com.badlogicgames.gdx/gdx-platform "1.0-SNAPSHOT"
+  :dependencies [[com.badlogicgames.gdx/gdx "0.9.9"]
+                 [com.badlogicgames.gdx/gdx-backend-lwjgl "0.9.9"]
+                 [com.badlogicgames.gdx/gdx-platform "0.9.9"
                   :classifier "natives-desktop"]
                  [org.clojure/clojure "1.5.1"]
                  [play-clj "0.2.0-SNAPSHOT"]]
