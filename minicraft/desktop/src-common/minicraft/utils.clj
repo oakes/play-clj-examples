@@ -28,11 +28,6 @@
          first
          nil?)))
 
-(defn ^:private tiled-map-layer-names
-  [screen]
-  (for [layer (tiled-map-layers screen)]
-    (tiled-map-layer! layer :get-name)))
-
 (defn is-on-start-layer?
   [screen {:keys [start-layer] :as entity}]
   (->> (for [layer-name (tiled-map-layer-names screen)]
