@@ -83,7 +83,7 @@
                       (e/animate screen)
                       (e/animate-attack screen entities)
                       (e/animate-hit entities)
-                      (e/prevent-move (remove #(= % entity) entities))
+                      (e/prevent-move entities)
                       (e/adjust-times screen))))
          e/attack-player
          u/order-by-latitude
