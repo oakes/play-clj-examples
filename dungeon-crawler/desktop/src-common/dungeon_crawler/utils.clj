@@ -13,34 +13,14 @@
 (def ^:const max-attack-time 1)
 (def ^:const aggro-distance 6)
 (def ^:const attack-distance 1.5)
-(def ^:const half-tile-width 0.5)
-(def ^:const half-tile-height 0.25)
 (def ^:const directions [:w :nw :n :ne
                          :e :se :s :sw])
 (def ^:const velocities [[-1 0] [-1 1] [0 1] [1 1]
                          [1 0] [1 -1] [0 -1] [-1 -1]])
 
-(defn screen->map
-  [{:keys [x y] :as entity}]
-  (assoc entity
-         :x (/ (- (/ x half-tile-width)
-                  (/ y half-tile-height))
-               2)
-         :y (/ (+ (/ y half-tile-height)
-                  (/ x half-tile-width))
-               2)))
-
-(defn map->screen
-  [{:keys [x y] :as entity}]
-  (assoc entity
-         :x (+ (* x half-tile-width)
-               (* y half-tile-width))
-         :y (+ (* -1 x half-tile-height)
-               (* y half-tile-height))))
-
 (defn is-on-layer?
   [screen {:keys [width height] :as entity} & layer-names]
-  (let [{:keys [x y]} (screen->map entity)
+  (let [{:keys [x y]} (screen->isometric-map screen entity)
         layers (map #(tiled-map-layer screen %) layer-names)]
     (->> (for [tile-x (range (int x) (+ x width))
                tile-y (range (int y) (+ y height))]

@@ -29,12 +29,12 @@
                       col (range r/cols)]
                   {:x row :y col})]
       (r/connect-rooms! screen rooms start-room)
-      (-> (e/create "characters/male_light.png" 256 128)
-          (assoc :player? true
-                 :max-velocity 2
-                 :x start-player-x
-                 :y start-player-y)
-          u/map->screen)))
+      (->> (assoc (e/create "characters/male_light.png" 128)
+                  :player? true
+                  :max-velocity 2
+                  :x start-player-x
+                  :y start-player-y)
+           (isometric-map->screen screen))))
   :on-render
   (fn [screen entities]
     (clear!)
@@ -44,7 +44,7 @@
                      (e/move screen entities)
                      (e/animate screen)
                      (e/prevent-move screen entities))))
-         (render! screen)
+         (render-sorted-map! screen ["walls"])
          (update-screen! screen)))
   :on-resize
   (fn [screen entities]
