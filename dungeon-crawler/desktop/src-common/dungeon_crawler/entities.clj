@@ -54,15 +54,13 @@
     entity))
 
 (defn prevent-move
-  [screen entities {:keys [x y x-change y-change health] :as entity}]
-  (if (or (and (or (not= 0 x-change) (not= 0 y-change))
-               (u/is-near-entities? entities entity 1))
-          (u/is-on-layer? screen entity "walls"))
-    (assoc entity
-           :x-velocity 0
-           :y-velocity 0
-           :x-change 0
-           :y-change 0
-           :x (- x x-change)
-           :y (- y y-change))
-    entity))
+  [screen entities {:keys [x y x-change y-change] :as entity}]
+  (let [old-x (- x x-change)
+        old-y (- y y-change)
+        x-entity (assoc entity :y old-y)
+        y-entity (assoc entity :x old-x)]
+    (merge entity
+           (when (u/is-invalid-location? screen entities x-entity)
+             {:x-velocity 0 :x-change 0 :x old-x})
+           (when (u/is-invalid-location? screen entities y-entity)
+             {:y-velocity 0 :y-change 0 :y old-y}))))
