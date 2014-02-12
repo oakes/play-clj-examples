@@ -13,6 +13,7 @@
 (def ^:const max-attack-time 1)
 (def ^:const aggro-distance 6)
 (def ^:const attack-distance 1.5)
+(def ^:const grid-tile-size 256)
 (def ^:const directions [:w :nw :n :ne
                          :e :se :s :sw])
 (def ^:const velocities [[-1 0] [-1 1] [0 1] [1 1]

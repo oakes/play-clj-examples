@@ -3,18 +3,16 @@
             [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]))
 
-(def ^:const grid-tile-size 256)
-
 (defn create
   [path mask-size]
-  (let [grid (u/split-texture path grid-tile-size mask-size)
+  (let [grid (u/split-texture path u/grid-tile-size mask-size)
         moves (zipmap u/directions
                       (map #(animation u/duration (take 4 %)) grid))
         attacks (zipmap u/directions (map #(texture (nth % 4)) grid))
         specials (zipmap u/directions (map #(texture (nth % 5)) grid))
         hits (zipmap u/directions (map #(texture (nth % 6)) grid))
         deads (zipmap u/directions (map #(texture (nth % 7)) grid))
-        texture-size (/ mask-size grid-tile-size)
+        texture-size (/ mask-size u/grid-tile-size)
         start-direction :s]
     (assoc (texture (get-in grid [(.indexOf u/directions start-direction) 0]))
            :width texture-size
