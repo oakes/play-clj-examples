@@ -16,7 +16,7 @@
 (def ^:const aggro-distance 6)
 (def ^:const attack-distance 1.5)
 
-(defn is-on-layer?
+(defn is-completely-on-layer?
   [screen {:keys [x y width height]} & layer-names]
   (let [layers (map #(tiled-map-layer screen %) layer-names)]
     (->> (for [tile-x (range (int x) (+ x width))
@@ -32,7 +32,7 @@
   [screen {:keys [start-layer] :as entity}]
   (->> (for [layer-name (tiled-map-layer-names screen)]
          (or (= layer-name background-layer)
-             (= (is-on-layer? screen entity layer-name)
+             (= (is-completely-on-layer? screen entity layer-name)
                 (= layer-name start-layer))))
        (drop-while identity)
        first

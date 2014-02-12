@@ -104,7 +104,7 @@
 
 (defn ^:private animate-water
   [screen entity]
-  (if (u/is-on-layer? screen entity "water")
+  (if (u/is-completely-on-layer? screen entity "water")
     (merge entity (texture entity :set-region-height u/pixels-per-tile))
     entity))
 
