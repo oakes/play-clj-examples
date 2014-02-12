@@ -34,7 +34,7 @@
                   :max-velocity 2
                   :x start-player-x
                   :y start-player-y)
-           (isometric-map->screen screen))))
+           (isometric->screen screen))))
   :on-render
   (fn [screen entities]
     (clear!)

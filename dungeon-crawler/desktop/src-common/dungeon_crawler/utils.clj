@@ -20,7 +20,7 @@
 
 (defn is-on-layer?
   [screen {:keys [width height] :as entity} & layer-names]
-  (let [{:keys [x y]} (screen->isometric-map screen entity)
+  (let [{:keys [x y]} (screen->isometric screen entity)
         layers (map #(tiled-map-layer screen %) layer-names)]
     (->> (for [tile-x (range (int x) (+ x width))
                tile-y (range (int y) (+ y height))]
