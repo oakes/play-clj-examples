@@ -2,7 +2,7 @@
   (:require [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]))
 
-(def ^:const vertical-tiles 30)
+(def ^:const vertical-tiles 4)
 (def ^:const pixels-per-tile 64)
 (def ^:const duration 0.2)
 (def ^:const damping 0.5)
