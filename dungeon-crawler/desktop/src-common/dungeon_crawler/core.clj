@@ -28,7 +28,7 @@
           rooms (for [row (range r/rows)
                       col (range r/cols)]
                   {:x row :y col})]
-      (r/change-room! screen rooms start-room)
+      (r/connect-rooms! screen rooms start-room)
       (-> (e/create "characters/male_light.png" 256 128)
           (assoc :player? true
                  :max-velocity 2

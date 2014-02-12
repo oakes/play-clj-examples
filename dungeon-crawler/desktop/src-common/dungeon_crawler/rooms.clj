@@ -18,7 +18,7 @@
          rand-nth)
     (catch Exception _ nil)))
 
-(defn connect-rooms!
+(defn connect-room!
   [screen r1 r2]
   (let [rand-spot (+ 1 (rand-int (- size 3)))
         x-diff (- (:x r2) (:x r1))
@@ -37,15 +37,15 @@
           (tiled-map-layer! :set-cell x (+ y 1) nil)
           (tiled-map-layer! :set-cell (+ x 1) (+ y 1) nil))))))
 
-(defn change-room!
+(defn connect-rooms!
   [screen rooms room]
   (let [visited-room (assoc room :visited? true)
         rooms (map #(if (= % room) visited-room %) rooms)]
     (if-let [next-room (get-rand-neighbor rooms room)]
       (do
-        (connect-rooms! screen room next-room)
+        (connect-room! screen room next-room)
         (loop [rooms rooms]
-          (let [new-rooms (change-room! screen rooms next-room)]
+          (let [new-rooms (connect-rooms! screen rooms next-room)]
             (if (= rooms new-rooms)
               rooms
               (recur new-rooms)))))
