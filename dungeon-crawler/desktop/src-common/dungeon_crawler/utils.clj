@@ -47,7 +47,7 @@
            (-> (some #(tiled-map-cell screen % tile-x tile-y) layers)
                nil?
                not))
-         (take-while identity)
+         (filter identity)
          first
          nil?
          not)))
