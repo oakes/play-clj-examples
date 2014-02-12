@@ -38,13 +38,17 @@
           (tiled-map-layer! :set-cell (+ x 1) (+ y 1) nil))))))
 
 (defn change-room!
-  [screen unvisited-rooms room]
-  (if-let [next-room (get-rand-neighbor unvisited-rooms room)]
-    (do
-      (connect-rooms! screen room next-room)
-      (loop [unvisited-rooms (remove #(= % next-room) unvisited-rooms)]
-        (let [remaining-rooms (change-room! screen unvisited-rooms next-room)]
-          (if (= unvisited-rooms remaining-rooms)
-            unvisited-rooms
-            (recur remaining-rooms)))))
-    unvisited-rooms))
+  [screen rooms room]
+  (let [visited-room (assoc room :visited? true)
+        rooms (map #(if (= % room) visited-room %) rooms)]
+    (if-let [next-room (get-rand-neighbor rooms room)]
+      (do
+        (connect-rooms! screen room next-room)
+        (loop [rooms rooms]
+          (let [new-rooms (change-room! screen rooms next-room)]
+            (if (= rooms new-rooms)
+              rooms
+              (recur new-rooms)))))
+      (if (-> (filter :end? rooms) count (> 0))
+        rooms
+        (map #(if (= % visited-room) (assoc % :end? true) %) rooms)))))
