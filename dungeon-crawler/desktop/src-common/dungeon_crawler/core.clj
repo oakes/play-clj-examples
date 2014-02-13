@@ -6,8 +6,7 @@
             [dungeon-crawler.utils :as u]
             [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
-            [play-clj.ui :refer :all]
-            [play-clj.utils :as utils]))
+            [play-clj.ui :refer :all]))
 
 (defn update-screen!
   [screen entities]
