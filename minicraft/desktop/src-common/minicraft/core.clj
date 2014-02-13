@@ -92,8 +92,7 @@
          (update-screen! screen)))
   :on-resize
   (fn [screen entities]
-    (height! screen u/vertical-tiles)
-    nil)
+    (height! screen u/vertical-tiles))
   :on-key-down
   (fn [{:keys [keycode]} entities]
     (when-let [player (u/get-player entities)]
