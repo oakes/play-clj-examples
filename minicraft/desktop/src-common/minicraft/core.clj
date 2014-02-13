@@ -86,7 +86,7 @@
                       (e/prevent-move entities)
                       (e/adjust-times screen))))
          e/attack-player
-         (high->low :y)
+         (sort-by :y #(compare %2 %1))
          play-sounds!
          (render-if-necessary! screen)
          (update-screen! screen)))
