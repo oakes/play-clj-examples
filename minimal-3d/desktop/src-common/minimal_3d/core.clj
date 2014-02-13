@@ -3,7 +3,8 @@
 (ns minimal-3d.core
   (:require [play-clj.core :refer :all]
             [play-clj.g3d :refer :all]
-            [play-clj.math :as m]))
+            [play-clj.math :as m]
+            [play-clj.ui :refer :all]))
 
 (defscreen main-screen
   :on-show
@@ -32,7 +33,25 @@
       (perspective! :update))
     (render! screen entities)))
 
+(defscreen text-screen
+  :on-show
+  (fn [screen entities]
+    (update! screen :camera (orthographic) :renderer (stage))
+    (assoc (label "0" (color :black))
+           :id :fps
+           :x 5))
+  :on-render
+  (fn [screen entities]
+    (->> (for [entity entities]
+           (case (:id entity)
+             :fps (doto entity (label! :set-text (str (game :fps))))
+             entity))
+         (render! screen)))
+  :on-resize
+  (fn [screen entities]
+    (height! screen 300)))
+
 (defgame minimal-3d
   :on-create
   (fn [this]
-    (set-screen! this main-screen)))
+    (set-screen! this main-screen text-screen)))
