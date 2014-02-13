@@ -23,19 +23,18 @@
   (let [rand-spot (+ 1 (rand-int (- size 3)))
         x-diff (- (:x r2) (:x r1))
         y-diff (- (:y r2) (:y r1))]
-    (doall
-      (for [i (range size)
+    (doseq [i (range size)
             :let [x (+ (* (:x r1) size)
                        rand-spot
                        (* x-diff i))
                   y (+ (* (:y r1) size)
                        rand-spot
                        (* y-diff i))]]
-        (doto (tiled-map-layer screen "walls")
-          (tiled-map-layer! :set-cell x y nil)
-          (tiled-map-layer! :set-cell (+ x 1) y nil)
-          (tiled-map-layer! :set-cell x (+ y 1) nil)
-          (tiled-map-layer! :set-cell (+ x 1) (+ y 1) nil))))))
+      (doto (tiled-map-layer screen "walls")
+        (tiled-map-layer! :set-cell x y nil)
+        (tiled-map-layer! :set-cell (+ x 1) y nil)
+        (tiled-map-layer! :set-cell x (+ y 1) nil)
+        (tiled-map-layer! :set-cell (+ x 1) (+ y 1) nil)))))
 
 (defn connect-rooms!
   [screen rooms room]
