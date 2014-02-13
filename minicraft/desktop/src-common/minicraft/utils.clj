@@ -131,7 +131,3 @@
 (defn find-id
   [entities id]
   (some #(if (= id (:id %)) %) entities))
-
-(defn order-by-latitude
-  [entities]
-  (sort #(if (or (:hit? %1) (< (:y %1) (:y %2))) 1 -1) entities))

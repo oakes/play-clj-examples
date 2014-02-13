@@ -86,7 +86,7 @@
                       (e/prevent-move entities)
                       (e/adjust-times screen))))
          e/attack-player
-         u/order-by-latitude
+         (high->low :y)
          play-sounds!
          (render-if-necessary! screen)
          (update-screen! screen)))
