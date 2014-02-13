@@ -6,7 +6,8 @@
             [dungeon-crawler.utils :as u]
             [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
-            [play-clj.ui :refer :all]))
+            [play-clj.ui :refer :all]
+            [play-clj.utils :as utils]))
 
 (defn update-screen!
   [screen entities]
@@ -46,7 +47,7 @@
                      (e/move screen entities)
                      (e/animate screen)
                      (e/prevent-move screen entities))))
-         (render-sorted-map! screen ["walls"])
+         (render-sorted! screen ["walls"])
          (update-screen! screen)))
   :on-resize
   (fn [screen entities]
