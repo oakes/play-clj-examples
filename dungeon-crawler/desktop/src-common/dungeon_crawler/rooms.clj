@@ -16,7 +16,7 @@
          (clojure.set/intersection (set rooms))
          vec
          rand-nth)
-    (catch Exception _ nil)))
+    (catch Exception _)))
 
 (defn connect-room!
   [screen r1 r2]

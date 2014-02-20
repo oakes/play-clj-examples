@@ -43,8 +43,7 @@
          (update-screen! screen)))
   :on-resize
   (fn [screen entities]
-    (height! screen u/vertical-tiles)
-    nil))
+    (height! screen u/vertical-tiles)))
 
 (defscreen text-screen
   :on-show
