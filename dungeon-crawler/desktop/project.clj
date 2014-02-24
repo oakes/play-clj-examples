@@ -6,7 +6,7 @@
                  [com.badlogicgames.gdx/gdx-platform "0.9.9"
                   :classifier "natives-desktop"]
                  [org.clojure/clojure "1.5.1"]
-                 [play-clj "LATEST"]]
+                 [play-clj "0.2.2-SNAPSHOT"]]
   :repositories [["sonatype"
                   "https://oss.sonatype.org/content/repositories/snapshots/"]]
   
