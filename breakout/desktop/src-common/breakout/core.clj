@@ -12,7 +12,7 @@
 
 (defn create-ball-body!
   [screen x y radius]
-  (->> (circle radius)
+  (->> (circle-shape radius)
        (fixture-def :density 1 :friction 0 :restitution 1 :shape)
        (create-body! screen (body-def :dynamic)
                      :set-transform x y 0 :create-fixture)))
@@ -25,7 +25,7 @@
         width 0
         0 0]
        float-array
-       (chain :create-chain)
+       (chain-shape :create-chain)
        (fixture-def :density 1 :shape)
        (create-body! screen (body-def :static)
                      :set-transform x y 0 :create-fixture)))
