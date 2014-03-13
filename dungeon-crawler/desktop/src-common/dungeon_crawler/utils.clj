@@ -61,32 +61,23 @@
   [entities]
   (some #(if (:player? %) %) entities))
 
-(defn ^:private is-touched?
-  [key]
-  (and (game :is-touched?)
-       (case key
-         :down (> (game :y) (* (game :height) (/ 2 3)))
-         :up (< (game :y) (/ (game :height) 3))
-         :left (< (game :x) (/ (game :width) 3))
-         :right (> (game :x) (* (game :width) (/ 2 3)))
-         false)))
-
 (defn ^:private get-player-velocity
   [{:keys [x-velocity y-velocity max-velocity]}]
-  [(cond
-     (or (is-pressed? :dpad-left) (is-touched? :left))
-     (* -1 max-velocity)
-     (or (is-pressed? :dpad-right) (is-touched? :right))
-     max-velocity
-     :else
-     x-velocity)
-   (cond
-     (or (is-pressed? :dpad-down) (is-touched? :down))
-     (* -1 max-velocity)
-     (or (is-pressed? :dpad-up) (is-touched? :up))
-     max-velocity
-     :else
-     y-velocity)])
+  (if (game :is-touched?)
+    (let [x (float (- (game :x) (/ (game :width) 2)))
+          y (float (- (/ (game :height) 2) (game :y)))
+          x-adjust (* max-velocity (Math/abs (double (/ x y))))
+          y-adjust (* max-velocity (Math/abs (double (/ y x))))]
+      [(* (Math/signum x) (min max-velocity x-adjust))
+       (* (Math/signum y) (min max-velocity y-adjust))])
+    [(cond
+       (is-pressed? :dpad-left) (* -1 max-velocity)
+       (is-pressed? :dpad-right) max-velocity
+       :else x-velocity)
+     (cond
+       (is-pressed? :dpad-down) (* -1 max-velocity)
+       (is-pressed? :dpad-up) max-velocity
+       :else y-velocity)]))
 
 (defn ^:private get-npc-aggro-velocity
   [{:keys [max-velocity] :as npc} me axis]
