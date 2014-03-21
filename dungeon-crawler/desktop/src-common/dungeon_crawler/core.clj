@@ -31,12 +31,21 @@
                       col (range r/cols)]
                   {:x row :y col})]
       (r/connect-rooms! screen rooms start-room)
-      (->> (assoc (e/create "characters/male_light.png" 128)
-                  :player? true
-                  :max-velocity 2
-                  :x start-player-x
-                  :y start-player-y)
-           (isometric->screen screen))))
+      (->> [(->> (assoc (e/create-player)
+                        :x start-player-x
+                        :y start-player-y)
+                 (isometric->screen screen))
+            (take 20 (repeat (e/create-elemental)))
+            (take 20 (repeat (e/create-ogre)))]
+           flatten
+           (reduce
+             (fn [entities entity]
+               (conj entities
+                     (-> (if (:npc? entity)
+                           (e/randomize-location screen entities entity)
+                           entity)
+                         (assoc :id (count entities)))))
+             []))))
   :on-render
   (fn [screen entities]
     (clear!)
@@ -45,7 +54,8 @@
                 (->> entity
                      (e/move screen entities)
                      (e/animate screen)
-                     (e/prevent-move screen entities))))
+                     (e/prevent-move screen entities)
+                     (e/adjust screen))))
          (render-sorted! screen ["walls"])
          (update-screen! screen)))
   :on-resize

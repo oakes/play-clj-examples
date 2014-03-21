@@ -22,11 +22,37 @@
            :specials specials
            :hits hits
            :deads deads
-           :min-distance 1
+           :min-distance 0.25
            :x-velocity 0
            :y-velocity 0
-           :attack-time 0
+           :x-feet 0
+           :y-feet 0
+           :last-attack 0
+           :attack-interval 1
            :direction start-direction)))
+
+(defn create-player
+  []
+  (assoc (create "characters/male_light.png" 128)
+         :player? true
+         :max-velocity 2
+         :attack-interval 0.25))
+
+(defn create-ogre
+  []
+  (assoc (create "characters/ogre.png" 256)
+         :npc? true
+         :max-velocity 1
+         :x-feet 0.25
+         :y-feet 0.25))
+
+(defn create-elemental
+  []
+  (assoc (create "characters/elemental.png" 256)
+         :npc? true
+         :max-velocity 2
+         :x-feet 0.25
+         :y-feet 0.25))
 
 (defn move
   [{:keys [delta-time]} entities {:keys [x y] :as entity}]
@@ -64,3 +90,22 @@
              {:x-velocity 0 :x-change 0 :x old-x})
            (when (u/is-invalid-location? screen entities y-entity)
              {:y-velocity 0 :y-change 0 :y old-y}))))
+
+(defn adjust
+  [{:keys [delta-time]} {:keys [last-attack attack-interval npc?] :as entity}]
+  (assoc entity
+         :last-attack (if (and npc? (>= last-attack attack-interval))
+                        0
+                        (+ last-attack delta-time))))
+
+(defn randomize-location
+  [screen entities {:keys [width height] :as entity}]
+  (->> (for [tile-x (range 0 (- u/map-width width))
+             tile-y (range 0 (- u/map-height height))]
+         (isometric->screen screen {:x tile-x :y tile-y}))
+       shuffle
+       (drop-while
+         #(or (u/is-near-entity? (merge entity %) (u/get-player entities) 5)
+              (u/is-invalid-location? screen entities (merge entity %))))
+       first
+       (merge entity)))

@@ -9,10 +9,8 @@
 (def ^:const deceleration 0.9)
 (def ^:const map-width 40)
 (def ^:const map-height 40)
-(def ^:const max-draw-time 0.2)
-(def ^:const max-attack-time 1)
-(def ^:const aggro-distance 6)
-(def ^:const attack-distance 1.5)
+(def ^:const aggro-distance 2)
+(def ^:const attack-distance 0.5)
 (def ^:const grid-tile-size 256)
 (def ^:const directions [:w :nw :n :ne
                          :e :se :s :sw])
@@ -34,12 +32,12 @@
          not)))
 
 (defn is-near-entity?
-  [{:keys [x y id] :as e} e2 min-distance]
+  [{:keys [x y x-feet y-feet id] :as e} e2 min-distance]
   (and (not= id (:id e2))
-       (nil? (:draw-time e2))
-       (> (:health e2) 0)
-       (< (Math/abs ^double (- x (:x e2))) min-distance)
-       (< (Math/abs ^double (- y (:y e2))) min-distance)))
+       (< (Math/abs (double (- (+ x x-feet) (+ (:x e2) (:x-feet e2)))))
+          min-distance)
+       (< (Math/abs (double (- (+ y y-feet) (+ (:y e2) (:y-feet e2)))))
+          min-distance)))
 
 (defn is-near-entities?
   [entities entity min-distance]
@@ -79,22 +77,28 @@
        (is-pressed? :dpad-up) max-velocity
        :else y-velocity)]))
 
+(defn ^:private get-npc-axis-velocity
+  [{:keys [max-velocity]} diff]
+  (cond
+    (> diff attack-distance) (* -1 max-velocity)
+    (< diff (* -1 attack-distance)) max-velocity
+    :else 0))
+
 (defn ^:private get-npc-aggro-velocity
-  [{:keys [max-velocity] :as npc} me axis]
-  (let [diff (- (get npc axis) (get me axis))]
-    (cond
-      (> diff attack-distance) (* -1 max-velocity)
-      (< diff (* -1 attack-distance)) max-velocity
-      :else 0)))
+  [{:keys [x y x-feet y-feet] :as npc} me]
+  (let [x-diff (- (+ x x-feet) (+ (:x me) (:x-feet me)))
+        y-diff (- (+ y y-feet) (+ (:y me) (:y-feet me)))]
+    [(get-npc-axis-velocity npc x-diff)
+     (get-npc-axis-velocity npc y-diff)]))
 
 (defn ^:private get-npc-velocity
-  [entities
-   {:keys [attack-time x y x-velocity y-velocity max-velocity] :as entity}]
+  [entities {:keys [last-attack attack-interval
+                    x-velocity y-velocity max-velocity]
+             :as entity}]
   (let [me (get-player entities)]
     (if (is-near-entity? entity me aggro-distance)
-      [(get-npc-aggro-velocity entity me :x)
-       (get-npc-aggro-velocity entity me :y)]
-      (if (= attack-time 0)
+      (get-npc-aggro-velocity entity me)
+      (if (>= last-attack attack-interval)
         [(* max-velocity (- (rand-int 3) 1))
          (* max-velocity (- (rand-int 3) 1))]
         [x-velocity y-velocity]))))
