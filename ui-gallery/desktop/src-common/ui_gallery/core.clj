@@ -37,7 +37,7 @@
     (render! screen entities))
   :on-resize
   (fn [screen entities]
-    (height! screen 400))
+    (height! screen (:height screen)))
   :on-ui-changed
   (fn [screen entities]
     (println (:actor screen))))
