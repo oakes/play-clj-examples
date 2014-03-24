@@ -35,8 +35,8 @@
                         :x start-player-x
                         :y start-player-y)
                  (isometric->screen screen))
-            (take 20 (repeat (e/create-elemental)))
-            (take 20 (repeat (e/create-ogre)))]
+            (e/create-elementals 20)
+            (e/create-ogres 20)]
            flatten
            (reduce
              (fn [entities entity]

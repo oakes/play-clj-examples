@@ -4,9 +4,8 @@
             [play-clj.g2d :refer :all]))
 
 (defn create
-  [path mask-size]
-  (let [grid (u/split-texture path u/grid-tile-size mask-size)
-        moves (zipmap u/directions
+  [grid mask-size]
+  (let [moves (zipmap u/directions
                       (map #(animation u/duration (take 4 %)) grid))
         attacks (zipmap u/directions (map #(texture (nth % 4)) grid))
         specials (zipmap u/directions (map #(texture (nth % 5)) grid))
@@ -33,26 +32,39 @@
 
 (defn create-player
   []
-  (assoc (create "characters/male_light.png" 128)
-         :player? true
-         :max-velocity 2
-         :attack-interval 0.25))
+  (let [path "characters/male_light.png"
+        mask-size 128
+        grid (u/split-texture path u/grid-tile-size mask-size)]
+    (assoc (create grid mask-size)
+           :player? true
+           :max-velocity 2
+           :attack-interval 0.25)))
 
-(defn create-ogre
-  []
-  (assoc (create "characters/ogre.png" 256)
-         :npc? true
-         :max-velocity 1
-         :x-feet 0.25
-         :y-feet 0.25))
+(defn create-ogres
+  [n]
+  (let [path "characters/ogre.png"
+        mask-size 256
+        grid (u/split-texture path u/grid-tile-size mask-size)]
+    (->> (assoc (create grid mask-size)
+                :npc? true
+                :max-velocity 1
+                :x-feet 0.25
+                :y-feet 0.25)
+         repeat
+         (take n))))
 
-(defn create-elemental
-  []
-  (assoc (create "characters/elemental.png" 256)
-         :npc? true
-         :max-velocity 2
-         :x-feet 0.25
-         :y-feet 0.25))
+(defn create-elementals
+  [n]
+  (let [path "characters/elemental.png"
+        mask-size 256
+        grid (u/split-texture path u/grid-tile-size mask-size)]
+    (->> (assoc (create grid mask-size)
+                :npc? true
+                :max-velocity 2
+                :x-feet 0.25
+                :y-feet 0.25)
+         repeat
+         (take n))))
 
 (defn move
   [{:keys [delta-time]} entities {:keys [x y] :as entity}]
