@@ -42,8 +42,12 @@
          (render! screen)
          (update-screen! screen)))
   :on-resize
-  (fn [screen entities]
-    (height! screen u/vertical-tiles)))
+  (fn [{:keys [width height] :as screen} entities]
+    (orthographic! screen
+                   :set-to-ortho
+                   false
+                   (* u/vertical-tiles (/ width height))
+                   u/vertical-tiles)))
 
 (defscreen text-screen
   :on-show
