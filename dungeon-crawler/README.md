@@ -16,4 +16,4 @@ All projects can be built using [Nightcode](https://nightcode.info/), or on the 
 
 ## Credit
 
-The artwork is courtesy of [Mitsuhiro Itakura](http://opengameart.org/content/64x64-isometric-roguelike-tiles) and [Clint Bellanger](http://opengameart.org/content/isometric-hero-and-creatures).
+The artwork is courtesy of [Mitsuhiro Itakura](http://opengameart.org/content/64x64-isometric-roguelike-tiles), [Clint Bellanger](http://opengameart.org/content/isometric-hero-and-creatures), and [Jinn](http://opengameart.org/content/dwarven-cursor).
