@@ -79,16 +79,16 @@
 (defn ^:private get-player-velocity
   [{:keys [x-velocity y-velocity]}]
   [(cond
-     (or (pressed? :dpad-left) (touched? :left))
+     (or (key-pressed? :dpad-left) (touched? :left))
      (* -1 max-velocity)
-     (or (pressed? :dpad-right) (touched? :right))
+     (or (key-pressed? :dpad-right) (touched? :right))
      max-velocity
      :else
      x-velocity)
    (cond
-     (or (pressed? :dpad-down) (touched? :down))
+     (or (key-pressed? :dpad-down) (touched? :down))
      (* -1 max-velocity)
-     (or (pressed? :dpad-up) (touched? :up))
+     (or (key-pressed? :dpad-up) (touched? :up))
      max-velocity
      :else
      y-velocity)])

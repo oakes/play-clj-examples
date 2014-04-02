@@ -69,12 +69,12 @@
       [(* (Math/signum x) (min max-velocity x-adjust))
        (* (Math/signum y) (min max-velocity y-adjust))])
     [(cond
-       (pressed? :dpad-left) (* -1 max-velocity)
-       (pressed? :dpad-right) max-velocity
+       (key-pressed? :dpad-left) (* -1 max-velocity)
+       (key-pressed? :dpad-right) max-velocity
        :else x-velocity)
      (cond
-       (pressed? :dpad-down) (* -1 max-velocity)
-       (pressed? :dpad-up) max-velocity
+       (key-pressed? :dpad-down) (* -1 max-velocity)
+       (key-pressed? :dpad-up) max-velocity
        :else y-velocity)]))
 
 (defn ^:private get-npc-axvelocity

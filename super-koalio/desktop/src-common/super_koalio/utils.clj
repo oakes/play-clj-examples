@@ -31,9 +31,9 @@
   [{:keys [me? x-velocity]}]
   (if me?
     (cond
-      (or (pressed? :dpad-left) (touched? :left))
+      (or (key-pressed? :dpad-left) (touched? :left))
       (* -1 max-velocity)
-      (or (pressed? :dpad-right) (touched? :right))
+      (or (key-pressed? :dpad-right) (touched? :right))
       max-velocity
       :else
       x-velocity)
@@ -43,7 +43,7 @@
   [{:keys [me? y-velocity can-jump?]}]
   (if me?
     (cond
-      (and can-jump? (or (pressed? :dpad-up) (touched? :up)))
+      (and can-jump? (or (key-pressed? :dpad-up) (touched? :up)))
       max-jump-velocity
       :else
       y-velocity)
