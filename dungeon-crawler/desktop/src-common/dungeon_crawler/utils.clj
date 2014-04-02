@@ -149,11 +149,13 @@
        (>= (:last-attack e) (:attack-interval e))
        (near-entity? e e2 0.5)))
 
-(defn get-click-entity
-  [entities click-x click-y]
-  (some (fn [{:keys [x y width height npc?] :as entity}]
-          (-> (rectangle x y width height)
-              (rectangle! :contains click-x click-y)
-              (and npc?)
-              (when entity)))
-        entities))
+(defn get-entity-at-cursor
+  [screen entities screen-x screen-y]
+  (let [v (vector-3 screen-x screen-y 0)
+        _ (orthographic! screen :unproject v)]
+    (some (fn [{:keys [x y width height npc? health] :as entity}]
+            (-> (rectangle x y width height)
+                (rectangle! :contains (. v x) (. v y))
+                (and npc? (> health 0))
+                (when entity)))
+          entities)))

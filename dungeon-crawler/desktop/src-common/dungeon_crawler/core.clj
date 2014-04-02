@@ -6,7 +6,6 @@
             [dungeon-crawler.utils :as u]
             [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
-            [play-clj.math :refer :all]
             [play-clj.ui :refer :all]))
 
 (defn update-screen!
@@ -21,7 +20,10 @@
   (fn [screen entities]
     (let [screen (->> (/ 1 u/pixels-per-tile)
                       (isometric-tiled-map "level1.tmx")
-                      (update! screen :camera (orthographic) :renderer))
+                      (update! screen
+                               :attack-cursor (pixmap "dwarven_gauntlet.png")
+                               :camera (orthographic)
+                               :renderer))
           start-room {:x (rand-int r/rows)
                       :y (rand-int r/cols)}
           start-player-x (+ (* (:x start-room) r/size)
@@ -67,12 +69,15 @@
   :on-touch-down
   (fn [{:keys [x y button] :as screen} entities]
     (when (= button (button-code :right))
-      (let [v (vector-3 x y 0)
-            _ (orthographic! screen :unproject v)
-            me (some #(if (:player? %) %) entities)
-            victim (u/get-click-entity entities (. v x) (. v y))
+      (let [me (some #(if (:player? %) %) entities)
+            victim (u/get-entity-at-cursor screen entities x y)
             victim (when (u/can-attack? me victim) victim)]
-        (e/attack screen me victim entities)))))
+        (e/attack screen me victim entities))))
+  :on-mouse-moved
+  (fn [{:keys [x y] :as screen} entities]
+    (if (u/get-entity-at-cursor screen entities x y)
+      (input! :set-cursor-image (:attack-cursor screen) 0 0)
+      (input! :set-cursor-image nil 0 0))))
 
 (defscreen text-screen
   :on-show
