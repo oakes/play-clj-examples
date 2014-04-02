@@ -28,7 +28,9 @@
            :y-feet 0
            :last-attack 0
            :attack-interval 1
-           :direction start-direction)))
+           :direction start-direction
+           :health 10
+           :damage 2)))
 
 (defn create-player
   []
@@ -38,7 +40,8 @@
     (assoc (create grid mask-size)
            :player? true
            :max-velocity 2
-           :attack-interval 0.25)))
+           :attack-interval 0.25
+           :health 20)))
 
 (defn create-ogres
   [n]
@@ -67,11 +70,12 @@
          (take n))))
 
 (defn move
-  [{:keys [delta-time]} entities {:keys [x y] :as entity}]
+  [{:keys [delta-time]} entities {:keys [x y health] :as entity}]
   (let [[x-velocity y-velocity] (u/get-velocity entities entity)
         x-change (* x-velocity delta-time)
         y-change (* y-velocity delta-time)]
-    (if (or (not= 0 x-change) (not= 0 y-change))
+    (if (and (> health 0)
+             (or (not= 0 x-change) (not= 0 y-change)))
       (assoc entity
              :x-velocity (u/decelerate x-velocity)
              :y-velocity (u/decelerate y-velocity)
@@ -81,15 +85,23 @@
              :y (+ y y-change))
       entity)))
 
+(defn ^:private recover
+  [{:keys [last-attack health direction] :as entity}]
+  (if (and (>= last-attack 0.5) (> health 0))
+    (merge entity
+           (-> (get-in entity [:moves direction])
+               (animation! :get-key-frame 0)
+               texture))
+    entity))
+
 (defn animate
-  [screen entity]
-  (if-let [direction (u/get-direction entity)]
-    (if-let [anim (get-in entity [:moves direction])]
+  [screen {:keys [x-velocity y-velocity] :as entity}]
+  (if-let [direction (u/get-direction x-velocity y-velocity)]
+    (let [anim (get-in entity [:moves direction])]
       (merge entity
              (animation->texture screen anim)
-             {:direction direction})
-      entity)
-    entity))
+             {:direction direction}))
+    (recover entity)))
 
 (defn prevent-move
   [screen entities {:keys [x y x-change y-change] :as entity}]
@@ -109,6 +121,30 @@
          :last-attack (if (and npc? (>= last-attack attack-interval))
                         0
                         (+ last-attack delta-time))))
+
+(defn attack
+  [screen {:keys [x y x-feet y-feet damage] :as attacker} victim entities]
+  (map (fn [{:keys [id last-direction] :as e}]
+         (cond
+           (= id (:id attacker))
+           (let [direction (or (when victim
+                                 (u/get-direction-to-entity attacker victim))
+                               last-direction)]
+             (merge e
+                    {:last-attack 0 :last-direction direction}
+                    (get-in e [:attacks direction])))
+           (= id (:id victim))
+           (if attacker
+             (let [health (max 0 (- (:health victim) damage))]
+               (merge e
+                      {:last-attack 0 :health health}
+                      (if (> health 0)
+                        (get-in e [:hits last-direction])
+                        (get-in e [:deads last-direction]))))
+             e)
+           :else
+           e))
+         entities))
 
 (defn randomize-location
   [screen entities {:keys [width height] :as entity}]

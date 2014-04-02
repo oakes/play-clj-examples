@@ -6,6 +6,7 @@
             [dungeon-crawler.utils :as u]
             [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
+            [play-clj.math :refer :all]
             [play-clj.ui :refer :all]))
 
 (defn update-screen!
@@ -49,18 +50,29 @@
   :on-render
   (fn [screen entities]
     (clear!)
-    (->> entities
-         (map (fn [entity]
-                (->> entity
-                     (e/move screen entities)
-                     (e/animate screen)
-                     (e/prevent-move screen entities)
-                     (e/adjust screen))))
-         (render-sorted! screen ["walls"])
-         (update-screen! screen)))
+    (let [me (some #(if (:player? %) %) entities)]
+      (->> entities
+           (map (fn [entity]
+                  (->> entity
+                       (e/move screen entities)
+                       (e/animate screen)
+                       (e/prevent-move screen entities)
+                       (e/adjust screen))))
+           (e/attack screen (some #(if (u/can-attack? % me) %) entities) me)
+           (render-sorted! screen ["walls"])
+           (update-screen! screen))))
   :on-resize
   (fn [screen entities]
-    (height! screen u/vertical-tiles)))
+    (height! screen u/vertical-tiles))
+  :on-touch-down
+  (fn [{:keys [x y button] :as screen} entities]
+    (when (= button (button-code :right))
+      (let [v (vector-3 x y 0)
+            _ (orthographic! screen :unproject v)
+            me (some #(if (:player? %) %) entities)
+            victim (u/get-click-entity entities (. v x) (. v y))
+            victim (when (u/can-attack? me victim) victim)]
+        (e/attack screen me victim entities)))))
 
 (defscreen text-screen
   :on-show

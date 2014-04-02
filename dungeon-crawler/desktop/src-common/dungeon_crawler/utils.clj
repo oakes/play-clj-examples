@@ -1,6 +1,7 @@
 (ns dungeon-crawler.utils
   (:require [play-clj.core :refer :all]
-            [play-clj.g2d :refer :all]))
+            [play-clj.g2d :refer :all]
+            [play-clj.math :refer :all]))
 
 (def ^:const vertical-tiles 4)
 (def ^:const pixels-per-tile 64)
@@ -34,6 +35,7 @@
 (defn near-entity?
   [{:keys [x y x-feet y-feet id] :as e} e2 min-distance]
   (and (not= id (:id e2))
+       (> (:health e2) 0)
        (< (Math/abs (double (- (+ x x-feet) (+ (:x e2) (:x-feet e2)))))
           min-distance)
        (< (Math/abs (double (- (+ y y-feet) (+ (:y e2) (:y-feet e2)))))
@@ -111,14 +113,20 @@
     :else [0 0]))
 
 (defn get-direction
-  [{:keys [^float x-velocity ^float y-velocity]}]
+  [x-velocity y-velocity]
   (some->> velocities
            (filter (fn [[x y]]
-                     (and (= x (int (Math/signum x-velocity)))
-                          (= y (int (Math/signum y-velocity))))))
+                     (and (= x (int (Math/signum (float x-velocity))))
+                          (= y (int (Math/signum (float y-velocity)))))))
            first
            (.indexOf velocities)
            (nth directions)))
+
+(defn get-direction-to-entity
+  [{:keys [x y x-feet y-feet last-direction] :as e} e2]
+  (or (get-direction (- (+ (:x e2) (:x-feet e2)) (+ x x-feet))
+                     (- (+ (:y e2) (:y-feet e2)) (+ y y-feet)))
+      last-direction))
 
 (defn find-id
   [entities id]
@@ -132,3 +140,20 @@
             item row]
       (texture! item :set-region item start start mask-size mask-size))
     grid))
+
+(defn can-attack?
+  [e e2]
+  (and e2
+       (not= (:npc? e) (:npc? e2))
+       (> (:health e) 0)
+       (>= (:last-attack e) (:attack-interval e))
+       (near-entity? e e2 0.5)))
+
+(defn get-click-entity
+  [entities click-x click-y]
+  (some (fn [{:keys [x y width height npc?] :as entity}]
+          (-> (rectangle x y width height)
+              (rectangle! :contains click-x click-y)
+              (and npc?)
+              (when entity)))
+        entities))
