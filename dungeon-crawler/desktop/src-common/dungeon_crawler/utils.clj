@@ -61,7 +61,7 @@
 
 (defn ^:private get-player-velocity
   [{:keys [x-velocity y-velocity max-velocity]}]
-  (if (game :touched?)
+  (if (and (game :touched?) (button-pressed? :left))
     (let [x (float (- (game :x) (/ (game :width) 2)))
           y (float (- (/ (game :height) 2) (game :y)))
           x-adjust (* max-velocity (Math/abs (double (/ x y))))
