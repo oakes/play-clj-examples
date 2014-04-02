@@ -22,7 +22,7 @@
          :y-velocity 0
          :x 20
          :y 10
-         :is-me? true
+         :me? true
          :can-jump? false
          :direction :right))
 

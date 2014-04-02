@@ -11,8 +11,8 @@
 
 (defn update-screen!
   [screen entities]
-  (doseq [{:keys [x y height is-me? to-destroy]} entities]
-    (when is-me?
+  (doseq [{:keys [x y height me? to-destroy]} entities]
+    (when me?
       (x! screen x)
       (when (< y (- height))
         (set-screen! super-koalio main-screen text-screen)))

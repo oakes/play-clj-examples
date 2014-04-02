@@ -17,7 +17,7 @@
 (def ^:const velocities [[-1 0] [-1 1] [0 1] [1 1]
                          [1 0] [1 -1] [0 -1] [-1 -1]])
 
-(defn is-on-layer?
+(defn on-layer?
   [screen {:keys [width height] :as entity} & layer-names]
   (let [{:keys [x y]} (screen->isometric screen entity)
         layers (map #(tiled-map-layer screen %) layer-names)]
@@ -31,7 +31,7 @@
          nil?
          not)))
 
-(defn is-near-entity?
+(defn near-entity?
   [{:keys [x y x-feet y-feet id] :as e} e2 min-distance]
   (and (not= id (:id e2))
        (< (Math/abs (double (- (+ x x-feet) (+ (:x e2) (:x-feet e2)))))
@@ -39,14 +39,14 @@
        (< (Math/abs (double (- (+ y y-feet) (+ (:y e2) (:y-feet e2)))))
           min-distance)))
 
-(defn is-near-entities?
+(defn near-entities?
   [entities entity min-distance]
-  (some #(is-near-entity? entity % min-distance) entities))
+  (some #(near-entity? entity % min-distance) entities))
 
-(defn is-invalid-location?
+(defn invalid-location?
   [screen entities entity]
-  (or (is-near-entities? entities entity (:min-distance entity))
-      (is-on-layer? screen entity "walls")))
+  (or (near-entities? entities entity (:min-distance entity))
+      (on-layer? screen entity "walls")))
 
 (defn decelerate
   [velocity]
@@ -61,7 +61,7 @@
 
 (defn ^:private get-player-velocity
   [{:keys [x-velocity y-velocity max-velocity]}]
-  (if (game :is-touched?)
+  (if (game :touched?)
     (let [x (float (- (game :x) (/ (game :width) 2)))
           y (float (- (/ (game :height) 2) (game :y)))
           x-adjust (* max-velocity (Math/abs (double (/ x y))))
@@ -69,15 +69,15 @@
       [(* (Math/signum x) (min max-velocity x-adjust))
        (* (Math/signum y) (min max-velocity y-adjust))])
     [(cond
-       (is-pressed? :dpad-left) (* -1 max-velocity)
-       (is-pressed? :dpad-right) max-velocity
+       (pressed? :dpad-left) (* -1 max-velocity)
+       (pressed? :dpad-right) max-velocity
        :else x-velocity)
      (cond
-       (is-pressed? :dpad-down) (* -1 max-velocity)
-       (is-pressed? :dpad-up) max-velocity
+       (pressed? :dpad-down) (* -1 max-velocity)
+       (pressed? :dpad-up) max-velocity
        :else y-velocity)]))
 
-(defn ^:private get-npc-axis-velocity
+(defn ^:private get-npc-axvelocity
   [{:keys [max-velocity]} diff]
   (cond
     (> diff attack-distance) (* -1 max-velocity)
@@ -88,15 +88,15 @@
   [{:keys [x y x-feet y-feet] :as npc} me]
   (let [x-diff (- (+ x x-feet) (+ (:x me) (:x-feet me)))
         y-diff (- (+ y y-feet) (+ (:y me) (:y-feet me)))]
-    [(get-npc-axis-velocity npc x-diff)
-     (get-npc-axis-velocity npc y-diff)]))
+    [(get-npc-axvelocity npc x-diff)
+     (get-npc-axvelocity npc y-diff)]))
 
 (defn ^:private get-npc-velocity
   [entities {:keys [last-attack attack-interval
                     x-velocity y-velocity max-velocity]
              :as entity}]
   (let [me (get-player entities)]
-    (if (is-near-entity? entity me aggro-distance)
+    (if (near-entity? entity me aggro-distance)
       (get-npc-aggro-velocity entity me)
       (if (>= last-attack attack-interval)
         [(* max-velocity (- (rand-int 3) 1))

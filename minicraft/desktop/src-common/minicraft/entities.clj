@@ -104,7 +104,7 @@
 
 (defn ^:private animate-water
   [screen entity]
-  (if (u/is-completely-on-layer? screen entity "water")
+  (if (u/completely-on-layer? screen entity "water")
     (merge entity (texture entity :set-region-height u/pixels-per-tile))
     entity))
 
@@ -121,11 +121,11 @@
        (animate-water screen)
        update-texture-size))
 
-(defn ^:private is-not-victim?
+(defn ^:private not-victim?
   [{:keys [x y health npc?] :as attacker} {:keys [player?] :as victim}]
   (or (= health 0)
       (not= npc? player?)
-      (not (u/is-near-entity? attacker victim u/attack-distance))
+      (not (u/near-entity? attacker victim u/attack-distance))
       (case (:direction attacker)
         :down (< (- y (:y victim)) 0) ; victim is up?
         :up (> (- y (:y victim)) 0) ; victim is down?
@@ -135,7 +135,7 @@
 
 (defn attack
   [entities attacker]
-  (let [victim (first (drop-while #(is-not-victim? attacker %) entities))]
+  (let [victim (first (drop-while #(not-victim? attacker %) entities))]
     (map (fn [e]
            (cond
              (:attack? e)
@@ -161,16 +161,16 @@
              e))
          entities)))
 
-(defn ^:private is-npc-attacker?
+(defn ^:private npc-attacker?
   [{:keys [npc? health attack-time] :as npc} player]
   (and npc?
        (> health 0)
        (= attack-time 0)
-       (u/is-near-entity? npc player u/attack-distance)))
+       (u/near-entity? npc player u/attack-distance)))
 
 (defn attack-player
   [entities]
-  (if-let [npc (some #(if (is-npc-attacker? % (u/get-player entities)) %)
+  (if-let [npc (some #(if (npc-attacker? % (u/get-player entities)) %)
                      entities)]
     (attack entities npc)
     entities))
@@ -207,7 +207,7 @@
              tile-y (range 0 (- u/map-height height))]
          {:x tile-x :y tile-y})
        shuffle
-       (drop-while #(u/is-invalid-location? screen entities (merge entity %)))
+       (drop-while #(u/invalid-location? screen entities (merge entity %)))
        first
        (merge entity {:id (count entities)})))
 
@@ -219,7 +219,7 @@
           (< y 0)
           (> y (- u/map-height 1))
           (and (or (not= 0 x-change) (not= 0 y-change))
-               (u/is-near-entities? entities entity 1)))
+               (u/near-entities? entities entity 1)))
     (assoc entity
            :x-velocity 0
            :y-velocity 0

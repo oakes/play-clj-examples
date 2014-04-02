@@ -17,9 +17,9 @@
       0
       velocity)))
 
-(defn ^:private is-touched?
+(defn ^:private touched?
   [key]
-  (and (game :is-touched?)
+  (and (game :touched?)
        (case key
          :down (> (game :y) (* (game :height) (/ 2 3)))
          :up (< (game :y) (/ (game :height) 3))
@@ -28,22 +28,22 @@
          false)))
 
 (defn get-x-velocity
-  [{:keys [is-me? x-velocity]}]
-  (if is-me?
+  [{:keys [me? x-velocity]}]
+  (if me?
     (cond
-      (or (is-pressed? :dpad-left) (is-touched? :left))
+      (or (pressed? :dpad-left) (touched? :left))
       (* -1 max-velocity)
-      (or (is-pressed? :dpad-right) (is-touched? :right))
+      (or (pressed? :dpad-right) (touched? :right))
       max-velocity
       :else
       x-velocity)
     x-velocity))
 
 (defn get-y-velocity
-  [{:keys [is-me? y-velocity can-jump?]}]
-  (if is-me?
+  [{:keys [me? y-velocity can-jump?]}]
+  (if me?
     (cond
-      (and can-jump? (or (is-pressed? :dpad-up) (is-touched? :up)))
+      (and can-jump? (or (pressed? :dpad-up) (touched? :up)))
       max-jump-velocity
       :else
       y-velocity)

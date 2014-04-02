@@ -98,9 +98,9 @@
         x-entity (assoc entity :y old-y)
         y-entity (assoc entity :x old-x)]
     (merge entity
-           (when (u/is-invalid-location? screen entities x-entity)
+           (when (u/invalid-location? screen entities x-entity)
              {:x-velocity 0 :x-change 0 :x old-x})
-           (when (u/is-invalid-location? screen entities y-entity)
+           (when (u/invalid-location? screen entities y-entity)
              {:y-velocity 0 :y-change 0 :y old-y}))))
 
 (defn adjust
@@ -117,7 +117,7 @@
          (isometric->screen screen {:x tile-x :y tile-y}))
        shuffle
        (drop-while
-         #(or (u/is-near-entity? (merge entity %) (u/get-player entities) 5)
-              (u/is-invalid-location? screen entities (merge entity %))))
+         #(or (u/near-entity? (merge entity %) (u/get-player entities) 5)
+              (u/invalid-location? screen entities (merge entity %))))
        first
        (merge entity)))
