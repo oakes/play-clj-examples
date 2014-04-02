@@ -93,7 +93,7 @@
      :else
      y-velocity)])
 
-(defn ^:private get-npc-axvelocity
+(defn ^:private get-npc-axis-velocity
   [diff]
   (cond
     (> diff attack-distance) (* -1 max-velocity-npc)
@@ -104,8 +104,8 @@
   [{:keys [x y] :as npc} me]
   (let [x-diff (- x (:x me))
         y-diff (- y (:y me))]
-    [(get-npc-axvelocity x-diff)
-     (get-npc-axvelocity y-diff)]))
+    [(get-npc-axis-velocity x-diff)
+     (get-npc-axis-velocity y-diff)]))
 
 (defn ^:private get-npc-velocity
   [entities {:keys [attack-time x y x-velocity y-velocity] :as entity}]

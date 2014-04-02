@@ -77,7 +77,7 @@
        (key-pressed? :dpad-up) max-velocity
        :else y-velocity)]))
 
-(defn ^:private get-npc-axvelocity
+(defn ^:private get-npc-axis-velocity
   [{:keys [max-velocity]} diff]
   (cond
     (> diff attack-distance) (* -1 max-velocity)
@@ -88,8 +88,8 @@
   [{:keys [x y x-feet y-feet] :as npc} me]
   (let [x-diff (- (+ x x-feet) (+ (:x me) (:x-feet me)))
         y-diff (- (+ y y-feet) (+ (:y me) (:y-feet me)))]
-    [(get-npc-axvelocity npc x-diff)
-     (get-npc-axvelocity npc y-diff)]))
+    [(get-npc-axis-velocity npc x-diff)
+     (get-npc-axis-velocity npc y-diff)]))
 
 (defn ^:private get-npc-velocity
   [entities {:keys [last-attack attack-interval
