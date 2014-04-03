@@ -134,13 +134,19 @@
                                  (u/get-direction-to-entity attacker victim))
                                direction)]
              (merge e
-                    {:last-attack 0 :direction direction}
-                    (get-in e [:attacks direction])))
+                    {:last-attack 0
+                     :direction direction}
+                    (when (> (:health e) 0)
+                      (get-in e [:attacks direction]))))
            (= id (:id victim))
            (if attacker
              (let [health (max 0 (- (:health victim) damage))]
                (merge e
-                      {:last-attack 0 :health health}
+                      {:last-attack 0
+                       :health health
+                       :play-sound (if (and (= health 0) (:death-sound victim))
+                                     (:death-sound victim)
+                                     (:hurt-sound victim))}
                       (if (> health 0)
                         (get-in e [:hits direction])
                         (get-in e [:deads direction]))))

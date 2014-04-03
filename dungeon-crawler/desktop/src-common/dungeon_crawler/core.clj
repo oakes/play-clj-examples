@@ -15,6 +15,13 @@
       (position! screen x y)))
   entities)
 
+(defn play-sounds!
+  [entities]
+  (doseq [{:keys [play-sound]} entities]
+    (when play-sound
+      (sound! play-sound :play)))
+  (map #(dissoc % :play-sound) entities))
+
 (defscreen main-screen
   :on-show
   (fn [screen entities]
@@ -32,15 +39,21 @@
                             (/ r/size 2))
           rooms (for [row (range r/rows)
                       col (range r/cols)]
-                  {:x row :y col})]
+                  {:x row :y col})
+          hurt-sound-1 (sound "playerhurt.wav")
+          hurt-sound-2 (sound "monsterhurt.wav")
+          death-sound (sound "death.wav")]
       (r/connect-rooms! screen rooms start-room)
       (->> [(->> (assoc (e/create-player)
                         :x start-player-x
-                        :y start-player-y)
+                        :y start-player-y
+                        :hurt-sound hurt-sound-1
+                        :death-sound death-sound)
                  (isometric->screen screen))
             (e/create-elementals 20)
             (e/create-ogres 20)]
            flatten
+           (map #(if-not (:hurt-sound %) (assoc % :hurt-sound hurt-sound-2) %))
            (reduce
              (fn [entities entity]
                (conj entities
@@ -61,6 +74,7 @@
                        (e/prevent-move screen entities)
                        (e/adjust screen))))
            (e/attack screen (some #(if (u/can-attack? % me) %) entities) me)
+           play-sounds!
            (render-sorted! screen ["walls"])
            (update-screen! screen))))
   :on-resize
