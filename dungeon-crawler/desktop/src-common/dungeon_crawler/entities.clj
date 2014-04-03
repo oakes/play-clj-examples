@@ -74,8 +74,10 @@
   (let [[x-velocity y-velocity] (u/get-velocity entities entity)
         x-change (* x-velocity delta-time)
         y-change (* y-velocity delta-time)]
-    (if (and (> health 0)
-             (or (not= 0 x-change) (not= 0 y-change)))
+    (cond
+      (= health 0)
+      (assoc entity :x-velocity 0 :y-velocity 0)
+      (or (not= 0 x-change) (not= 0 y-change))
       (assoc entity
              :x-velocity (u/decelerate x-velocity)
              :y-velocity (u/decelerate y-velocity)
@@ -83,6 +85,7 @@
              :y-change y-change
              :x (+ x x-change)
              :y (+ y y-change))
+      :else
       entity)))
 
 (defn ^:private recover
@@ -124,14 +127,14 @@
 
 (defn attack
   [screen {:keys [x y x-feet y-feet damage] :as attacker} victim entities]
-  (map (fn [{:keys [id last-direction] :as e}]
+  (map (fn [{:keys [id direction] :as e}]
          (cond
            (= id (:id attacker))
            (let [direction (or (when victim
                                  (u/get-direction-to-entity attacker victim))
-                               last-direction)]
+                               direction)]
              (merge e
-                    {:last-attack 0 :last-direction direction}
+                    {:last-attack 0 :direction direction}
                     (get-in e [:attacks direction])))
            (= id (:id victim))
            (if attacker
@@ -139,8 +142,8 @@
                (merge e
                       {:last-attack 0 :health health}
                       (if (> health 0)
-                        (get-in e [:hits last-direction])
-                        (get-in e [:deads last-direction]))))
+                        (get-in e [:hits direction])
+                        (get-in e [:deads direction]))))
              e)
            :else
            e))
