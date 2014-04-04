@@ -96,9 +96,6 @@
 (defscreen npc-health-screen
   :on-show
   (fn [screen entities]
-    (update! screen
-             :renderer (-> main-screen :screen deref :renderer)
-             :camera (-> main-screen :screen deref :camera))
     (shape :filled))
   :on-render
   (fn [screen entities]
@@ -116,7 +113,7 @@
                     :set-color (color :green)
                     :rect bar-x bar-y (* bar-w pct) u/npc-bar-h)
              vector
-             (draw! screen))))))
+             (draw! (-> main-screen :screen deref)))))))
 
 (defscreen overlay-screen
   :on-show
