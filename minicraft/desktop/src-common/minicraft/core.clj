@@ -69,10 +69,7 @@
              (take 10 (repeat (e/create-cactus cactus-image))))
            flatten
            (map #(if-not (:hurt-sound %) (assoc % :hurt-sound hurt-sound-2) %))
-           (reduce
-             (fn [entities entity]
-               (conj entities (e/randomize-location screen entities entity)))
-             []))))
+           (reduce #(e/randomize-locations screen %1 %2) []))))
   :on-render
   (fn [screen entities]
     (clear!)

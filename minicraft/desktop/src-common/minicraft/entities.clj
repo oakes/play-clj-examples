@@ -201,7 +201,7 @@
       entity)
     entity))
 
-(defn randomize-location
+(defn randomize-locations
   [screen entities {:keys [width height] :as entity}]
   (->> (for [tile-x (range 0 (- u/map-width width))
              tile-y (range 0 (- u/map-height height))]
@@ -209,7 +209,8 @@
        shuffle
        (drop-while #(u/invalid-location? screen entities (merge entity %)))
        first
-       (merge entity {:id (count entities)})))
+       (merge entity {:id (count entities)})
+       (conj entities)))
 
 (defn prevent-move
   [entities {:keys [x y x-change y-change health] :as entity}]

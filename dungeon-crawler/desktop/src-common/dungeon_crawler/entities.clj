@@ -168,3 +168,11 @@
               (u/invalid-location? screen entities (merge entity %))))
        first
        (merge entity)))
+
+(defn randomize-locations
+  [screen entities entity]
+  (conj entities
+        (-> (if (:npc? entity)
+              (randomize-location screen entities entity)
+              entity)
+            (assoc :id (count entities)))))
