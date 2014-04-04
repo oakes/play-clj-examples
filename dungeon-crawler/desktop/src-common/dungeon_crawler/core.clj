@@ -65,7 +65,7 @@
   :on-render
   (fn [screen entities]
     (clear!)
-    (let [me (some #(if (:player? %) %) entities)]
+    (let [me (u/get-player entities)]
       (->> entities
            (map (fn [entity]
                   (->> entity
@@ -75,7 +75,7 @@
                        (e/adjust screen))))
            (e/attack screen (some #(if (u/can-attack? % me) %) entities) me)
            play-sounds!
-           (render-sorted! screen ["walls"])
+           (render-sorted! screen u/sort-entities ["walls"])
            (update-screen! screen))))
   :on-resize
   (fn [screen entities]
@@ -83,7 +83,7 @@
   :on-touch-down
   (fn [{:keys [x y button] :as screen} entities]
     (when (= button (button-code :right))
-      (let [me (some #(if (:player? %) %) entities)
+      (let [me (u/get-player entities)
             victim (u/get-entity-at-cursor screen entities x y)
             victim (when (u/can-attack? me victim) victim)]
         (e/attack screen me victim entities))))
@@ -92,6 +92,44 @@
     (if (u/get-entity-at-cursor screen entities x y)
       (input! :set-cursor-image (:attack-cursor screen) 0 0)
       (input! :set-cursor-image nil 0 0))))
+
+(defscreen player-health-screen
+  :on-show
+  (fn [screen entities]
+    (update! screen :renderer (shape))
+    nil)
+  :on-render
+  (fn [screen entities]
+    (let [me (u/get-player (-> main-screen :entities deref))
+          pct (/ (:health me) (+ (:health me) (:wounds me)))]
+      (render-shapes! screen :filled
+                      :set-color (color :red)
+                      :rect u/bar-x u/bar-y u/bar-w u/bar-h
+                      :set-color (color :green)
+                      :rect u/bar-x u/bar-y u/bar-w (* u/bar-h pct)))))
+
+(defscreen npc-health-screen
+  :on-show
+  (fn [screen entities]
+    (update! screen
+             :renderer (shape)
+             :camera (-> main-screen :screen deref :camera))
+    nil)
+  :on-render
+  (fn [screen entities]
+    (when-let [e (u/get-entity-at-cursor (-> main-screen :screen deref)
+                                         (-> main-screen :entities deref)
+                                         (game :x)
+                                         (game :y))]
+      (let [bar-x (:x e)
+            bar-y (+ (:y e) (:height e))
+            bar-w (:width e)
+            pct (/ (:health e) (+ (:health e) (:wounds e)))]
+        (render-shapes! screen :filled
+                        :set-color (color :red)
+                        :rect bar-x bar-y bar-w u/npc-bar-h
+                        :set-color (color :green)
+                        :rect bar-x bar-y (* bar-w pct) u/npc-bar-h)))))
 
 (defscreen text-screen
   :on-show
@@ -114,4 +152,5 @@
 (defgame dungeon-crawler
   :on-create
   (fn [this]
-    (set-screen! this main-screen text-screen)))
+    (set-screen! this main-screen
+                 player-health-screen npc-health-screen text-screen)))

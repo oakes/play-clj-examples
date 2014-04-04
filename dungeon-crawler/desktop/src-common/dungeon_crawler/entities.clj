@@ -30,6 +30,7 @@
            :attack-interval 1
            :direction start-direction
            :health 10
+           :wounds 0
            :damage 2)))
 
 (defn create-player
@@ -144,6 +145,7 @@
                (merge e
                       {:last-attack 0
                        :health health
+                       :wounds (+ (:wounds victim) damage)
                        :play-sound (if (and (= health 0) (:death-sound victim))
                                      (:death-sound victim)
                                      (:hurt-sound victim))}
