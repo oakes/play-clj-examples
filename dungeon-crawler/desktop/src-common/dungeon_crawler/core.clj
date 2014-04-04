@@ -93,28 +93,13 @@
       (input! :set-cursor-image (:attack-cursor screen) 0 0)
       (input! :set-cursor-image nil 0 0))))
 
-(defscreen player-health-screen
-  :on-show
-  (fn [screen entities]
-    (update! screen :renderer (shape))
-    nil)
-  :on-render
-  (fn [screen entities]
-    (let [me (u/get-player (-> main-screen :entities deref))
-          pct (/ (:health me) (+ (:health me) (:wounds me)))]
-      (render-shapes! screen :filled
-                      :set-color (color :red)
-                      :rect u/bar-x u/bar-y u/bar-w u/bar-h
-                      :set-color (color :green)
-                      :rect u/bar-x u/bar-y u/bar-w (* u/bar-h pct)))))
-
 (defscreen npc-health-screen
   :on-show
   (fn [screen entities]
     (update! screen
-             :renderer (shape)
+             :renderer (-> main-screen :screen deref :renderer)
              :camera (-> main-screen :screen deref :camera))
-    nil)
+    (shape :filled))
   :on-render
   (fn [screen entities]
     (when-let [e (u/get-entity-at-cursor (-> main-screen :screen deref)
@@ -125,24 +110,35 @@
             bar-y (+ (:y e) (:height e))
             bar-w (:width e)
             pct (/ (:health e) (+ (:health e) (:wounds e)))]
-        (render-shapes! screen :filled
-                        :set-color (color :red)
-                        :rect bar-x bar-y bar-w u/npc-bar-h
-                        :set-color (color :green)
-                        :rect bar-x bar-y (* bar-w pct) u/npc-bar-h)))))
+        (->> (shape (first entities)
+                    :set-color (color :red)
+                    :rect bar-x bar-y bar-w u/npc-bar-h
+                    :set-color (color :green)
+                    :rect bar-x bar-y (* bar-w pct) u/npc-bar-h)
+             vector
+             (render! screen))))))
 
-(defscreen text-screen
+(defscreen overlay-screen
   :on-show
   (fn [screen entities]
     (update! screen :camera (orthographic) :renderer (stage))
-    (assoc (label "0" (color :white))
-           :id :fps
-           :x 5))
+    [(assoc (label "0" (color :white))
+            :id :fps
+            :x 5)
+     (assoc (shape :filled)
+            :id :bar)])
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
            (case (:id entity)
              :fps (doto entity (label! :set-text (str (game :fps))))
+             :bar (let [me (u/get-player (-> main-screen :entities deref))
+                        pct (/ (:health me) (+ (:health me) (:wounds me)))]
+                    (shape entity
+                           :set-color (color :red)
+                           :rect u/bar-x u/bar-y u/bar-w u/bar-h
+                           :set-color (color :green)
+                           :rect u/bar-x u/bar-y u/bar-w (* u/bar-h pct)))
              entity))
          (render! screen)))
   :on-resize
@@ -152,5 +148,4 @@
 (defgame dungeon-crawler
   :on-create
   (fn [this]
-    (set-screen! this main-screen
-                 player-health-screen npc-health-screen text-screen)))
+    (set-screen! this main-screen npc-health-screen overlay-screen)))
