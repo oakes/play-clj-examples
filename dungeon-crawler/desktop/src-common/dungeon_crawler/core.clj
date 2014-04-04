@@ -116,7 +116,7 @@
                     :set-color (color :green)
                     :rect bar-x bar-y (* bar-w pct) u/npc-bar-h)
              vector
-             (render! screen))))))
+             (draw! screen))))))
 
 (defscreen overlay-screen
   :on-show
