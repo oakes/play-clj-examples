@@ -12,7 +12,7 @@ public class AndroidLauncher extends AndroidApplication {
           RT.var("clojure.core", "require").invoke(Symbol.intern("dungeon-crawler.core"));
 		try {
 			Game game = (Game) RT.var("dungeon-crawler.core", "dungeon-crawler").deref();
-			initialize(game, true);
+			initialize(game);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

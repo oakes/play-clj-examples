@@ -6,5 +6,5 @@
 
 (defn -main
   []
-  (LwjglApplication. dungeon-crawler "dungeon-crawler" 800 600 true)
+  (LwjglApplication. dungeon-crawler "dungeon-crawler" 800 600)
   (Keyboard/enableRepeatEvents true))

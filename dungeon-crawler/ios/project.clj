@@ -1,9 +1,11 @@
 (defproject dungeon-crawler "0.0.1-SNAPSHOT"
   :description "FIXME: write description"
-  :dependencies [[com.badlogicgames.gdx/gdx "0.9.9"]
-                 [com.badlogicgames.gdx/gdx-backend-robovm "0.9.9"]
+  :dependencies [[com.badlogicgames.gdx/gdx "1.0-SNAPSHOT"]
+                 [com.badlogicgames.gdx/gdx-backend-robovm "1.0-SNAPSHOT"]
                  [org.clojure/clojure "1.5.1"]
-                 [play-clj "0.2.5-SNAPSHOT"]]
+                 [play-clj "0.3.0-SNAPSHOT"]]
+  :repositories [["sonatype"
+                  "https://oss.sonatype.org/content/repositories/snapshots/"]]
   :source-paths ["src/clojure" "../desktop/src-common"]
   :java-source-paths ["src/java"]
   :javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"]

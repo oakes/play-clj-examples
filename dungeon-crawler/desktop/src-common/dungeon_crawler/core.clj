@@ -116,7 +116,9 @@
             :id :fps
             :x 5)
      (assoc (shape :filled)
-            :id :bar)])
+            :id :bar
+            :x 5
+            :y 40)])
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
@@ -126,9 +128,9 @@
                         pct (/ (:health me) (+ (:health me) (:wounds me)))]
                     (shape entity
                            :set-color (color :red)
-                           :rect u/bar-x u/bar-y u/bar-w u/bar-h
+                           :rect 0 0 u/bar-w u/bar-h
                            :set-color (color :green)
-                           :rect u/bar-x u/bar-y u/bar-w (* u/bar-h pct)))
+                           :rect 0 0 u/bar-w (* u/bar-h pct)))
              entity))
          (render! screen)))
   :on-resize

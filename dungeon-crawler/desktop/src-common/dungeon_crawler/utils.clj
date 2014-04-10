@@ -18,8 +18,6 @@
 (def ^:const velocities [[-1 0] [-1 1] [0 1] [1 1]
                          [1 0] [1 -1] [0 -1] [-1 -1]])
 
-(def ^:const bar-x 5)
-(def ^:const bar-y 50)
 (def ^:const bar-w 20)
 (def ^:const bar-h 80)
 (def ^:const npc-bar-h 0.1)
@@ -168,7 +166,22 @@
 
 (defn sort-entities
   [entities]
-  (sort #(if (or (= (:health %1) 0)
-                 (> (:y %1) (:y %2)))
-           -1 1)
+  (sort (fn [e1 e2]
+          (cond
+            (and (:health e1)
+                 (:health e2)
+                 (= (:health e1) 0)
+                 (> (:health e2) 0))
+            -1
+            (and (:health e1)
+                 (:health e2)
+                 (> (:health e1) 0)
+                 (= (:health e2) 0))
+            1
+            (> (:y e1) (:y e2))
+            -1
+            (> (:y e2) (:y e1))
+            1
+            :else
+            0))
         entities))
