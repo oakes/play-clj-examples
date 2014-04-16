@@ -3,7 +3,7 @@
 (ns minimal-3d.core
   (:require [play-clj.core :refer :all]
             [play-clj.g3d :refer :all]
-            [play-clj.math :as m]
+            [play-clj.math :refer :all]
             [play-clj.ui :refer :all]))
 
 (defscreen main-screen
@@ -24,12 +24,12 @@
           model-attrs (bit-or (usage :position) (usage :normal))
           builder (model-builder)]
       (model (model-builder! builder :create-box 2 2 2 model-mat model-attrs)
-             (m/vector-3 0 0 0))))
+             (vector-3 0 0 0))))
   :on-render
   (fn [screen entities]
     (clear! 1 1 1 1)
     (doto screen
-      (perspective! :rotate-around (m/vector-3 0 0 0) (m/vector-3 0 1 0) 1)
+      (perspective! :rotate-around (vector-3 0 0 0) (vector-3 0 1 0) 1)
       (perspective! :update))
     (render! screen entities)))
 
