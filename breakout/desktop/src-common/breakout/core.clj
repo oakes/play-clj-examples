@@ -104,8 +104,8 @@
   (fn [screen entities]
     (clear!)
     (->> entities
-         (render! screen)
-         (step! screen)))
+         (step! screen)
+         (render! screen)))
   :on-mouse-moved
   (fn [screen entities]
     (move-paddle! entities)
