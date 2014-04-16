@@ -82,12 +82,12 @@
       (width! screen game-w)
       ; attach the ball to the paddle so it can't reach the blocks
       ; (this is only meant to test that joints work)
-      (comment create-joint! screen
-               (joint-def :rope
-                          :body-a (:body ball)
-                          :body-b (:body paddle)
-                          :max-length 5
-                          :collide-connected true))
+      (comment add-joint! screen
+                  (joint-def :rope
+                             :body-a (:body ball)
+                             :body-b (:body paddle)
+                             :max-length 5
+                             :collide-connected true))
       ; return the entities
       [(assoc ball :ball? true)
        (assoc paddle :paddle? true)
