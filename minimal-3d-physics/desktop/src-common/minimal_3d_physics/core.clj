@@ -76,8 +76,8 @@
   (fn [screen entities]
     (clear!)
     (->> entities
-         (step! screen)
-         (render! screen)))
+         (render! screen)
+         (step! screen)))
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
     (size! screen width height))
