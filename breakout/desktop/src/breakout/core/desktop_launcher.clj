@@ -6,5 +6,5 @@
 
 (defn -main
   []
-  (LwjglApplication. breakout "breakout" 800 600 true)
+  (LwjglApplication. breakout "breakout" 800 600)
   (Keyboard/enableRepeatEvents true))

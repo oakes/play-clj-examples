@@ -11,43 +11,40 @@
 (def ^:const pixels-per-tile 32)
 
 (defn create-ball-body!
-  [screen x y radius]
-  (->> (circle-shape radius)
-       (fixture-def :density 1 :friction 0 :restitution 1 :shape)
-       (create-body! screen (body-def :dynamic)
-                     :set-transform x y 0 :create-fixture)))
+  [screen radius]
+  (let [body (add-body! screen (body-def :dynamic))]
+    (->> (circle-shape radius)
+         (fixture-def :density 1 :friction 0 :restitution 1 :shape)
+         (body! body :create-fixture))
+    body))
 
 (defn create-rect-body!
-  [screen x y width height]
-  (->> [0 0
-        0 height
-        width height
-        width 0
-        0 0]
-       float-array
-       (chain-shape :create-chain)
-       (fixture-def :density 1 :shape)
-       (create-body! screen (body-def :static)
-                     :set-transform x y 0 :create-fixture)))
+  [screen width height]
+  (let [body (add-body! screen (body-def :static))]
+    (->> [0 0
+          0 height
+          width height
+          width 0
+          0 0]
+         float-array
+         (chain-shape :create-chain)
+         (fixture-def :density 1 :shape)
+         (body! body :create-fixture))
+    body))
 
 (defn create-ball-entity!
   [screen]
   (let [ball (texture "ball.png")
-        x (/ 100 pixels-per-tile)
-        y (/ 100 pixels-per-tile)
         width (/ (texture! ball :get-region-width) pixels-per-tile)
         height (/ (texture! ball :get-region-height) pixels-per-tile)]
     (assoc ball
-           :body (doto (create-ball-body! screen x y (/ width 2))
-                   (body! :set-linear-velocity 10 10))
-           :x x :y y
+           :body (create-ball-body! screen (/ width 2))
            :width width :height height)))
 
 (defn create-rect-entity!
-  [screen block x y width height]
+  [screen block width height]
   (assoc block
-         :body (create-rect-body! screen x y width height)
-         :x 0 :y 0
+         :body (create-rect-body! screen width height)
          :width width :height height))
 
 (defn move-paddle!
@@ -70,10 +67,17 @@
           block-h (/ (texture! block :get-region-height) pixels-per-tile)
           block-cols (int (/ game-w block-w))
           block-rows (int (/ game-h 2 block-h))
-          ball (create-ball-entity! screen)
-          paddle (create-rect-entity! screen block 0 0 block-w block-h)
-          wall {:body (create-rect-body! screen 0 0 game-w game-h)}
-          floor {:body (create-rect-body! screen 0 0 game-w floor-h)}]
+          ball (doto (create-ball-entity! screen)
+                 (body-position! (/ 100 pixels-per-tile)
+                                 (/ 100 pixels-per-tile)
+                                 0)
+                 (body! :set-linear-velocity 10 10))
+          paddle (doto (create-rect-entity! screen block block-w block-h)
+                   (body-position! 0 0 0))
+          wall (doto {:body (create-rect-body! screen game-w game-h)}
+                 (body-position! 0 0 0))
+          floor (doto {:body (create-rect-body! screen game-w floor-h)}
+                  (body-position! 0 0 0))]
       ; set the screen width in tiles
       (width! screen game-w)
       ; attach the ball to the paddle so it can't reach the blocks
@@ -93,7 +97,8 @@
              row (range block-rows)
              :let [x (* col block-w)
                    y (+ (* row block-h) (- game-h (* block-h block-rows)))]]
-         (assoc (create-rect-entity! screen block x y block-w block-h)
+         (assoc (doto (create-rect-entity! screen block block-w block-h)
+                  (body-position! x y 0))
                 :block? true))]))
   :on-render
   (fn [screen entities]

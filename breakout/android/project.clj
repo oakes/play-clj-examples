@@ -1,11 +1,13 @@
 (defproject breakout "0.0.1-SNAPSHOT"
   :description "FIXME: write description"
   
-  :dependencies [[com.badlogicgames.gdx/gdx "0.9.9" :use-resources true]
-                 [com.badlogicgames.gdx/gdx-backend-android "0.9.9"]
+  :dependencies [[com.badlogicgames.gdx/gdx "1.0-SNAPSHOT" :use-resources true]
+                 [com.badlogicgames.gdx/gdx-backend-android "1.0-SNAPSHOT"]
                  [neko/neko "3.0.1"]
                  [org.clojure-android/clojure "1.5.1-jb" :use-resources true]
                  [play-clj "LATEST"]]
+  :repositories [["sonatype"
+                  "https://oss.sonatype.org/content/repositories/snapshots/"]]
   :profiles {:dev {:dependencies [[android/tools.nrepl "0.2.0-bigstack"]
                                   [compliment "0.0.3"]]
                    :android {:aot :all-with-unused}}
