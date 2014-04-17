@@ -7,6 +7,18 @@
 
 (def ^:const mass 10)
 
+(defn get-environment
+  []
+  (let [attr-type (attribute-type :color :ambient-light)
+        attr (attribute :color attr-type 0.3 0.3 0.3 1)]
+    (environment :set attr)))
+
+(defn get-camera
+  []
+  (doto (perspective 67 (game :width) (game :height))
+    (position! 10 10 10)
+    (direction! 0 0 0)))
+
 (defn get-material
   []
   (let [c (color (+ 0.5 (* 0.5 (rand)))
@@ -22,8 +34,8 @@
   (bit-or (usage :position) (usage :normal)))
 
 (defn create-sphere-body!
-  [screen]
-  (let [shape (sphere-shape 2)
+  [screen radius]
+  (let [shape (sphere-shape radius)
         local-inertia (vector-3 0 0 0)]
     (sphere-shape! shape :calculate-local-inertia mass local-inertia)
     (->> (rigid-body-info mass nil shape local-inertia)
@@ -31,15 +43,15 @@
          (add-body! screen))))
 
 (defn create-sphere!
-  [screen]
+  [screen w h]
   (-> (model-builder)
-      (model-builder! :create-sphere 4 4 4 24 24 (get-material) (get-attrs))
+      (model-builder! :create-sphere w h 4 24 24 (get-material) (get-attrs))
       model
-      (assoc :body (create-sphere-body! screen))))
+      (assoc :body (create-sphere-body! screen (/ w 2)))))
 
 (defn create-box-body!
-  [screen]
-  (let [shape (box-shape (vector-3 2 2 1))
+  [screen half-w half-h]
+  (let [shape (box-shape (vector-3 half-w half-h 1))
         local-inertia (vector-3 0 0 0)]
     (box-shape! shape :calculate-local-inertia mass local-inertia)
     (->> (rigid-body-info mass nil shape local-inertia)
@@ -47,30 +59,24 @@
          (add-body! screen))))
 
 (defn create-box!
-  [screen]
+  [screen w h]
   (-> (model-builder)
-      (model-builder! :create-box 4 4 2 (get-material) (get-attrs))
+      (model-builder! :create-box w h 2 (get-material) (get-attrs))
       model
-      (assoc :body (create-box-body! screen))))
+      (assoc :body (create-box-body! screen (/ w 2) (/ h 2)))))
 
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-    (let [env (let [attr-type (attribute-type :color :ambient-light)
-                    attr (attribute :color attr-type 0.3 0.3 0.3 1)]
-                (environment :set attr))
-          cam (doto (perspective 67 (game :width) (game :height))
-                (position! 10 10 10)
-                (direction! 0 0 0))
-          screen (update! screen
+    (let [screen (update! screen
                           :renderer (model-batch)
                           :world (bullet-3d :discrete-dynamics
                                             :set-gravity (vector-3 0 -10 0))
-                          :attributes env
-                          :camera cam)]
-      [(doto (create-sphere! screen)
+                          :attributes (get-environment)
+                          :camera (get-camera))]
+      [(doto (create-sphere! screen 4 4)
          (body-position! 0 5 5))
-       (doto (create-box! screen)
+       (doto (create-box! screen 4 4)
          (body-position! 0 5 0))]))
   :on-render
   (fn [screen entities]
@@ -83,7 +89,7 @@
     (size! screen width height))
   :on-touch-down
   (fn [{:keys [x y] :as screen} entities]
-    (conj entities (create-box! screen))))
+    (conj entities (create-box! screen 4 4))))
 
 (defscreen text-screen
   :on-show
