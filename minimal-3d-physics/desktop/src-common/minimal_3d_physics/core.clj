@@ -31,9 +31,9 @@
          (add-body! screen))))
 
 (defn create-sphere!
-  [screen mat attrs]
+  [screen]
   (-> (model-builder)
-      (model-builder! :create-sphere 4 4 4 24 24 mat attrs)
+      (model-builder! :create-sphere 4 4 4 24 24 (get-material) (get-attrs))
       model
       (assoc :body (create-sphere-body! screen))))
 
@@ -47,9 +47,9 @@
          (add-body! screen))))
 
 (defn create-box!
-  [screen mat attrs]
+  [screen]
   (-> (model-builder)
-      (model-builder! :create-box 4 4 2 mat attrs)
+      (model-builder! :create-box 4 4 2 (get-material) (get-attrs))
       model
       (assoc :body (create-box-body! screen))))
 
@@ -68,9 +68,9 @@
                                             :set-gravity (vector-3 0 -10 0))
                           :attributes env
                           :camera cam)]
-      [(doto (create-sphere! screen (get-material) (get-attrs))
+      [(doto (create-sphere! screen)
          (body-position! 0 5 5))
-       (doto (create-box! screen (get-material) (get-attrs))
+       (doto (create-box! screen)
          (body-position! 0 5 0))]))
   :on-render
   (fn [screen entities]
@@ -83,7 +83,7 @@
     (size! screen width height))
   :on-touch-down
   (fn [{:keys [x y] :as screen} entities]
-    (conj entities (create-box! screen (get-material) (get-attrs)))))
+    (conj entities (create-box! screen))))
 
 (defscreen text-screen
   :on-show
