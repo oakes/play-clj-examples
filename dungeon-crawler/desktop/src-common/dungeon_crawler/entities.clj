@@ -21,7 +21,6 @@
            :specials specials
            :hits hits
            :deads deads
-           :min-distance 0.25
            :x-velocity 0
            :y-velocity 0
            :x-feet 0
@@ -42,7 +41,7 @@
            :player? true
            :max-velocity 2
            :attack-interval 0.25
-           :health 20)))
+           :health 40)))
 
 (defn create-ogres
   [n]
