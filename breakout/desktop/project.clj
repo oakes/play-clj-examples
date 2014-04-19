@@ -3,6 +3,9 @@
   
   :dependencies [[com.badlogicgames.gdx/gdx "1.0-SNAPSHOT"]
                  [com.badlogicgames.gdx/gdx-backend-lwjgl "1.0-SNAPSHOT"]
+                 [com.badlogicgames.gdx/gdx-box2d "1.0-SNAPSHOT"]
+                 [com.badlogicgames.gdx/gdx-box2d-platform "1.0-SNAPSHOT"
+                  :classifier "natives-desktop"]
                  [com.badlogicgames.gdx/gdx-bullet "1.0-SNAPSHOT"]
                  [com.badlogicgames.gdx/gdx-bullet-platform "1.0-SNAPSHOT"
                   :classifier "natives-desktop"]

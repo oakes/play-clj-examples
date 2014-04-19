@@ -89,7 +89,13 @@
     (size! screen width height))
   :on-touch-down
   (fn [{:keys [x y] :as screen} entities]
-    (conj entities (create-box! screen 4 4))))
+    (conj entities (create-box! screen 4 4)))
+  :on-begin-contact
+  (fn [screen entities]
+    (let [e1 (first-entity screen entities)
+          e2 (second-entity screen entities)]
+      ; do something with the entities that made contact
+      nil)))
 
 (defscreen text-screen
   :on-show

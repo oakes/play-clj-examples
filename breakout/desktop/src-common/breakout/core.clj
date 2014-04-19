@@ -116,7 +116,7 @@
     nil)
   :on-begin-contact
   (fn [screen entities]
-    (when-let [entity (find-body (first-body screen) entities)]
+    (when-let [entity (first-entity screen entities)]
       (cond
         (:floor? entity)
         (set-screen! breakout main-screen text-screen)
