@@ -2,7 +2,6 @@
   (:require [play-clj.core :refer :all]
             [play-clj.g3d :refer :all]
             [play-clj.g3d-physics :refer :all]
-            [play-clj.physics :refer :all]
             [play-clj.math :refer :all]
             [play-clj.ui :refer :all]))
 

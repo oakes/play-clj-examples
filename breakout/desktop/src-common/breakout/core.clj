@@ -4,7 +4,6 @@
   (:require [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
             [play-clj.g2d-physics :refer :all]
-            [play-clj.physics :refer :all]
             [play-clj.ui :refer :all]))
 
 (declare breakout main-screen text-screen)
