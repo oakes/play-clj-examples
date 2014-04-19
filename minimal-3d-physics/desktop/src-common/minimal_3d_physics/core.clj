@@ -70,7 +70,7 @@
   (fn [screen entities]
     (let [screen (update! screen
                           :renderer (model-batch)
-                          :world (bullet-3d :discrete-dynamics
+                          :world (bullet-3d :rigid
                                             :set-gravity (vector-3 0 -10 0))
                           :attributes (get-environment)
                           :camera (get-camera))]
