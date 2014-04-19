@@ -158,12 +158,11 @@
        (near-entity? e e2 attack-distance)))
 
 (defn get-entity-at-cursor
-  [screen entities screen-x screen-y]
-  (let [v (vector-3 screen-x screen-y 0)
-        _ (orthographic! screen :unproject v)]
+  [screen entities window-x window-y]
+  (let [cursor-pos (window->screen screen window-x window-y)]
     (some (fn [{:keys [x y width height npc? health] :as entity}]
             (-> (rectangle x y width height)
-                (rectangle! :contains (. v x) (. v y))
+                (rectangle! :contains (:x cursor-pos) (:y cursor-pos))
                 (and npc? (> health 0))
                 (when entity)))
           entities)))
