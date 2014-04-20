@@ -1,6 +1,6 @@
 ## Introduction
 
-A play-clj game in which ... well, that part is up to you.
+A play-clj game showcasing LibGDX's UI widgets.
 
 ## Contents
 
