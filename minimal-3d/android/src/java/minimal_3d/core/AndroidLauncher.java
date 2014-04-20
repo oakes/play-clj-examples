@@ -12,7 +12,7 @@ public class AndroidLauncher extends AndroidApplication {
           RT.var("clojure.core", "require").invoke(Symbol.intern("minimal-3d.core"));
 		try {
 			Game game = (Game) RT.var("minimal-3d.core", "minimal-3d").deref();
-			initialize(game, true);
+			initialize(game);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -6,5 +6,5 @@
 
 (defn -main
   []
-  (LwjglApplication. minimal-3d "minimal-3d" 800 600 true)
+  (LwjglApplication. minimal-3d "minimal-3d" 800 600)
   (Keyboard/enableRepeatEvents true))

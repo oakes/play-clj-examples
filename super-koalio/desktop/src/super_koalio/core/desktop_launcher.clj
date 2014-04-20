@@ -6,5 +6,5 @@
 
 (defn -main
   []
-  (LwjglApplication. super-koalio "super-koalio" 800 600 true)
+  (LwjglApplication. super-koalio "super-koalio" 800 600)
   (Keyboard/enableRepeatEvents true))

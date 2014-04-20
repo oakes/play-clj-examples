@@ -62,7 +62,7 @@
   (let [layers (map #(tiled-map-layer screen %) layer-names)]
     (->> (for [tile-x (range (int x) (+ x width))
                tile-y (range (int y) (+ y height))]
-           (some #(when (tiled-map-cell screen % tile-x tile-y)
+           (some #(when (tiled-map-cell % tile-x tile-y)
                     [tile-x tile-y])
                  layers))
          (drop-while nil?)

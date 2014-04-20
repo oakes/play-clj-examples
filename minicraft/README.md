@@ -1,6 +1,6 @@
 ## Introduction
 
-A play-clj game based on a Ludum Dare entry by Notch.
+A play-clj game in which ... well, that part is up to you.
 
 ## Contents
 

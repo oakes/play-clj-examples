@@ -6,5 +6,5 @@
 
 (defn -main
   []
-  (LwjglApplication. minicraft "minicraft" 800 600 true)
+  (LwjglApplication. minicraft "minicraft" 800 600)
   (Keyboard/enableRepeatEvents true))

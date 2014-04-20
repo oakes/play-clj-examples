@@ -74,14 +74,14 @@
   (fn [screen entities]
     (clear!)
     (->> entities
-         (pmap (fn [entity]
-                 (->> entity
-                      (e/move screen entities)
-                      (e/animate screen)
-                      (e/animate-attack screen entities)
-                      (e/animate-hit entities)
-                      (e/prevent-move entities)
-                      (e/adjust-times screen))))
+         (map (fn [entity]
+                (->> entity
+                     (e/move screen entities)
+                     (e/animate screen)
+                     (e/animate-attack screen entities)
+                     (e/animate-hit entities)
+                     (e/prevent-move entities)
+                     (e/adjust-times screen))))
          e/attack-player
          (sort-by :y #(compare %2 %1))
          play-sounds!
@@ -97,14 +97,14 @@
         (= keycode (key-code :space))
         (e/attack entities player))))
   :on-touch-down
-  (fn [{:keys [x y]} entities]
+  (fn [{:keys [input-x input-y]} entities]
     (let [player (u/get-player entities)
           min-x (/ (game :width) 3)
           max-x (* (game :width) (/ 2 3))
           min-y (/ (game :height) 3)
           max-y (* (game :height) (/ 2 3))]
       (cond
-        (and (< min-x x max-x) (< min-y y max-y))
+        (and (< min-x input-x max-x) (< min-y input-y max-y))
         (e/attack entities player)))))
 
 (defscreen text-screen

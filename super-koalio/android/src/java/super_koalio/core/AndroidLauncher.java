@@ -12,7 +12,7 @@ public class AndroidLauncher extends AndroidApplication {
           RT.var("clojure.core", "require").invoke(Symbol.intern("super-koalio.core"));
 		try {
 			Game game = (Game) RT.var("super-koalio.core", "super-koalio").deref();
-			initialize(game, true);
+			initialize(game);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

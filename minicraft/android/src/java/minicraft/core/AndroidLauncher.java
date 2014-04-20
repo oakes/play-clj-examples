@@ -12,7 +12,7 @@ public class AndroidLauncher extends AndroidApplication {
           RT.var("clojure.core", "require").invoke(Symbol.intern("minicraft.core"));
 		try {
 			Game game = (Game) RT.var("minicraft.core", "minicraft").deref();
-			initialize(game, true);
+			initialize(game);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

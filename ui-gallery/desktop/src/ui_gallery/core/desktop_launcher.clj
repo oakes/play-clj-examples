@@ -6,5 +6,5 @@
 
 (defn -main
   []
-  (LwjglApplication. ui-gallery "ui-gallery" 800 600 true)
+  (LwjglApplication. ui-gallery "ui-gallery" 800 600)
   (Keyboard/enableRepeatEvents true))

@@ -3,8 +3,8 @@ package minimal_3d_physics.core;
 import clojure.lang.RT;
 import clojure.lang.Symbol;
 
-import com.badlogic.gdx.backends.iosrobovm.*;
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.backends.iosrobovm.*;
 
 import org.robovm.apple.foundation.*;
 import org.robovm.apple.uikit.*;

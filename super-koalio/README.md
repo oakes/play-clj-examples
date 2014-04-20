@@ -1,6 +1,6 @@
 ## Introduction
 
-A play-clj game based on a LibGDX test game.
+A play-clj game in which ... well, that part is up to you.
 
 ## Contents
 

@@ -21,7 +21,7 @@
   (let [layers (map #(tiled-map-layer screen %) layer-names)]
     (->> (for [tile-x (range (int x) (+ x width))
                tile-y (range (int y) (+ y height))]
-           (-> (some #(tiled-map-cell screen % tile-x tile-y) layers)
+           (-> (some #(tiled-map-cell % tile-x tile-y) layers)
                nil?
                not))
          (drop-while identity)
@@ -30,7 +30,7 @@
 
 (defn on-start-layer?
   [screen {:keys [start-layer] :as entity}]
-  (->> (for [layer-name (tiled-map-layer-names screen)]
+  (->> (for [layer-name (map-layer-names screen)]
          (or (= layer-name background-layer)
              (= (completely-on-layer? screen entity layer-name)
                 (= layer-name start-layer))))

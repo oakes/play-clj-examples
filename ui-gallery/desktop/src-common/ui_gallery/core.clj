@@ -15,10 +15,9 @@
                :space-top 20
                :space-bottom 20]
               :row
-              (select-box ["I'm a select box"
-                           "I am too"
-                           "So am I"]
-                          ui-skin)
+              (select-box ui-skin :set-items (into-array ["I'm a select box"
+                                                          "I am too"
+                                                          "So am I"]))
               :row
               (check-box "I'm a check box" ui-skin)
               :row
