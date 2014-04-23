@@ -36,12 +36,20 @@
          nil?
          not)))
 
+(defn entity-width
+  [e]
+  (- (:width e) (* 2 (:x-feet e))))
+
+(defn entity-height
+  [e]
+  (- (:height e) (* 2 (:y-feet e))))
+
 (defn near-entity?
   [{:keys [x y x-feet y-feet id] :as e} e2 min-distance]
   (let [x-diff (- (+ x x-feet) (+ (:x e2) (:x-feet e2)))
         y-diff (- (+ y y-feet) (+ (:y e2) (:y-feet e2)))
-        x-distance (+ (- (:width e2) (* 2 (:x-feet e2))) min-distance)
-        y-distance (+ (- (:height e2) (* 2 (:y-feet e2))) min-distance)]
+        x-distance (+ (min (entity-width e) (entity-width e2)) min-distance)
+        y-distance (+ (min (entity-height e) (entity-height e2)) min-distance)]
     (and (not= id (:id e2))
          (> (:health e2) 0)
          (< (Math/abs (double x-diff)) x-distance)
@@ -96,10 +104,10 @@
   [{:keys [x y x-feet y-feet] :as npc} me]
   (let [x-diff (- (+ x x-feet) (+ (:x me) (:x-feet me)))
         y-diff (- (+ y y-feet) (+ (:y me) (:y-feet me)))
-        x-distance (+ (- (:width me) (* 2 (:x-feet me))) attack-distance)
-        y-distance (+ (- (:height me) (* 2 (:y-feet me))) attack-distance)]
-    [(get-npc-axis-velocity npc x-diff x-distance)
-     (get-npc-axis-velocity npc y-diff y-distance)]))
+        x-dist (+ (min (entity-width npc) (entity-width me)) attack-distance)
+        y-dist (+ (min (entity-height npc) (entity-height me)) attack-distance)]
+    [(get-npc-axis-velocity npc x-diff x-dist)
+     (get-npc-axis-velocity npc y-diff y-dist)]))
 
 (defn ^:private get-npc-velocity
   [entities {:keys [last-attack attack-interval
