@@ -48,8 +48,8 @@
   [{:keys [x y x-feet y-feet id] :as e} e2 min-distance]
   (let [x-diff (- (+ x x-feet) (+ (:x e2) (:x-feet e2)))
         y-diff (- (+ y y-feet) (+ (:y e2) (:y-feet e2)))
-        x-distance (+ (min (entity-width e) (entity-width e2)) min-distance)
-        y-distance (+ (min (entity-height e) (entity-height e2)) min-distance)]
+        x-distance (+ (max (entity-width e) (entity-width e2)) min-distance)
+        y-distance (+ (max (entity-height e) (entity-height e2)) min-distance)]
     (and (not= id (:id e2))
          (> (:health e2) 0)
          (< (Math/abs (double x-diff)) x-distance)
@@ -104,8 +104,8 @@
   [{:keys [x y x-feet y-feet] :as npc} me]
   (let [x-diff (- (+ x x-feet) (+ (:x me) (:x-feet me)))
         y-diff (- (+ y y-feet) (+ (:y me) (:y-feet me)))
-        x-dist (+ (min (entity-width npc) (entity-width me)) attack-distance)
-        y-dist (+ (min (entity-height npc) (entity-height me)) attack-distance)]
+        x-dist (+ (max (entity-width npc) (entity-width me)) attack-distance)
+        y-dist (+ (max (entity-height npc) (entity-height me)) attack-distance)]
     [(get-npc-axis-velocity npc x-diff x-dist)
      (get-npc-axis-velocity npc y-diff y-dist)]))
 
