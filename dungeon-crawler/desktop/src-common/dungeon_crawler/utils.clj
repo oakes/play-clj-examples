@@ -10,6 +10,7 @@
 (def ^:const deceleration 0.9)
 (def ^:const map-width 40)
 (def ^:const map-height 40)
+(def ^:const entity-size 0.25)
 (def ^:const aggro-distance 2)
 (def ^:const attack-distance 0.25)
 (def ^:const grid-tile-size 256)
@@ -47,13 +48,11 @@
 (defn near-entity?
   [{:keys [x y x-feet y-feet id] :as e} e2 min-distance]
   (let [x-diff (- (+ x x-feet) (+ (:x e2) (:x-feet e2)))
-        y-diff (- (+ y y-feet) (+ (:y e2) (:y-feet e2)))
-        x-distance (+ (max (entity-width e) (entity-width e2)) min-distance)
-        y-distance (+ (max (entity-height e) (entity-height e2)) min-distance)]
+        y-diff (- (+ y y-feet) (+ (:y e2) (:y-feet e2)))]
     (and (not= id (:id e2))
          (> (:health e2) 0)
-         (< (Math/abs (double x-diff)) x-distance)
-         (< (Math/abs (double y-diff)) y-distance))))
+         (< (Math/abs (double x-diff)) (+ entity-size min-distance))
+         (< (Math/abs (double y-diff)) (+ entity-size min-distance)))))
 
 (defn near-entities?
   [entities entity min-distance]
@@ -94,20 +93,18 @@
        :else y-velocity)]))
 
 (defn ^:private get-npc-axis-velocity
-  [{:keys [max-velocity]} diff distance]
+  [{:keys [max-velocity]} diff]
   (cond
-    (> diff distance) (* -1 max-velocity)
-    (< diff (* -1 distance)) max-velocity
+    (> diff entity-size) (* -1 max-velocity)
+    (< diff (* -1 entity-size)) max-velocity
     :else 0))
 
 (defn ^:private get-npc-aggro-velocity
   [{:keys [x y x-feet y-feet] :as npc} me]
   (let [x-diff (- (+ x x-feet) (+ (:x me) (:x-feet me)))
-        y-diff (- (+ y y-feet) (+ (:y me) (:y-feet me)))
-        x-dist (+ (max (entity-width npc) (entity-width me)) attack-distance)
-        y-dist (+ (max (entity-height npc) (entity-height me)) attack-distance)]
-    [(get-npc-axis-velocity npc x-diff x-dist)
-     (get-npc-axis-velocity npc y-diff y-dist)]))
+        y-diff (- (+ y y-feet) (+ (:y me) (:y-feet me)))]
+    [(get-npc-axis-velocity npc x-diff)
+     (get-npc-axis-velocity npc y-diff)]))
 
 (defn ^:private get-npc-velocity
   [entities {:keys [last-attack attack-interval
