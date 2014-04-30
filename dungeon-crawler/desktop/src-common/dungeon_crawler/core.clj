@@ -8,6 +8,9 @@
             [play-clj.g2d :refer :all]
             [play-clj.ui :refer :all]))
 
+(defonce manager (asset-manager))
+(set-asset-manager! manager)
+
 (defn update-screen!
   [screen entities]
   (doseq [{:keys [x y player?]} entities]
@@ -118,7 +121,10 @@
      (assoc (shape :filled)
             :id :bar
             :x 5
-            :y 40)])
+            :y 40)
+     ; this is meant for testing particle effects
+     (comment assoc (particle-effect "particles/fire.p")
+            :id :particle)])
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
@@ -135,7 +141,11 @@
          (render! screen)))
   :on-resize
   (fn [screen entities]
-    (height! screen 300)))
+    (height! screen 300)
+    (for [e entities]
+      (case (:id e)
+        :particle (assoc e :x (width screen) :y 0)
+        e))))
 
 (defgame dungeon-crawler
   :on-create
