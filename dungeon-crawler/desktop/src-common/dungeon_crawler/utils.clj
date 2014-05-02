@@ -10,7 +10,7 @@
 (def ^:const deceleration 0.9)
 (def ^:const map-width 40)
 (def ^:const map-height 40)
-(def ^:const aggro-distance 3)
+(def ^:const aggro-distance 2)
 (def ^:const attack-distance 0.25)
 (def ^:const grid-tile-size 256)
 (def ^:const directions [:w :nw :n :ne
@@ -38,8 +38,10 @@
 
 (defn entity-rect
   [{:keys [x y x-feet y-feet width height]} min-distance]
-  (rectangle (+ x x-feet)
-             (+ y y-feet)
+  (rectangle (- (+ x x-feet)
+                (/ min-distance 4))
+             (- (+ y y-feet)
+                (/ min-distance 4))
              (- (+ width (/ min-distance 2))
                 (* 2 x-feet))
              (- (+ height (/ min-distance 2))
