@@ -10,8 +10,7 @@
 (def ^:const deceleration 0.9)
 (def ^:const map-width 40)
 (def ^:const map-height 40)
-(def ^:const entity-size 0.25)
-(def ^:const aggro-distance 2)
+(def ^:const aggro-distance 3)
 (def ^:const attack-distance 0.25)
 (def ^:const grid-tile-size 256)
 (def ^:const directions [:w :nw :n :ne
@@ -37,22 +36,20 @@
          nil?
          not)))
 
-(defn entity-width
-  [e]
-  (- (:width e) (* 2 (:x-feet e))))
-
-(defn entity-height
-  [e]
-  (- (:height e) (* 2 (:y-feet e))))
+(defn entity-rect
+  [{:keys [x y x-feet y-feet width height]} min-distance]
+  (rectangle (+ x x-feet)
+             (+ y y-feet)
+             (- (+ width (/ min-distance 2))
+                (* 2 x-feet))
+             (- (+ height (/ min-distance 2))
+                (* 2 y-feet))))
 
 (defn near-entity?
-  [{:keys [x y x-feet y-feet id] :as e} e2 min-distance]
-  (let [x-diff (- (+ x x-feet) (+ (:x e2) (:x-feet e2)))
-        y-diff (- (+ y y-feet) (+ (:y e2) (:y-feet e2)))]
-    (and (not= id (:id e2))
-         (> (:health e2) 0)
-         (< (Math/abs (double x-diff)) (+ entity-size min-distance))
-         (< (Math/abs (double y-diff)) (+ entity-size min-distance)))))
+  [e e2 min]
+  (and (not= (:id e) (:id e2))
+       (> (:health e2) 0)
+       (rectangle! (entity-rect e min) :overlaps (entity-rect e2 min))))
 
 (defn near-entities?
   [entities entity min-distance]
@@ -95,16 +92,20 @@
 (defn ^:private get-npc-axis-velocity
   [{:keys [max-velocity]} diff]
   (cond
-    (> diff entity-size) (* -1 max-velocity)
-    (< diff (* -1 entity-size)) max-velocity
+    (> diff attack-distance) (* -1 max-velocity)
+    (< diff (* -1 attack-distance)) max-velocity
     :else 0))
 
 (defn ^:private get-npc-aggro-velocity
-  [{:keys [x y x-feet y-feet] :as npc} me]
-  (let [x-diff (- (+ x x-feet) (+ (:x me) (:x-feet me)))
-        y-diff (- (+ y y-feet) (+ (:y me) (:y-feet me)))]
-    [(get-npc-axis-velocity npc x-diff)
-     (get-npc-axis-velocity npc y-diff)]))
+  [npc me]
+  (let [r1 (entity-rect npc attack-distance)
+        r2 (entity-rect me attack-distance)
+        x-diff (- (rectangle! r1 :get-x) (rectangle! r2 :get-x))
+        y-diff (- (rectangle! r1 :get-y) (rectangle! r2 :get-y))]
+    (if-not (rectangle! r1 :overlaps r2)
+      [(get-npc-axis-velocity npc x-diff)
+       (get-npc-axis-velocity npc y-diff)]
+      [0 0])))
 
 (defn ^:private get-npc-velocity
   [entities {:keys [last-attack attack-interval
