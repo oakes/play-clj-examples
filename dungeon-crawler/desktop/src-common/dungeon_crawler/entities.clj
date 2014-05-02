@@ -51,8 +51,8 @@
     (->> (assoc (create grid mask-size)
                 :npc? true
                 :max-velocity 1
-                :x-feet 0.3
-                :y-feet 0.3)
+                :x-feet 0.35
+                :y-feet 0.35)
          repeat
          (take n))))
 
