@@ -91,10 +91,10 @@
   (fn [screen entities]
     (height! screen u/vertical-tiles))
   :on-key-down
-  (fn [{:keys [keycode]} entities]
+  (fn [{:keys [key]} entities]
     (when-let [player (u/get-player entities)]
       (cond
-        (= keycode (key-code :space))
+        (= key (key-code :space))
         (e/attack entities player))))
   :on-touch-down
   (fn [{:keys [input-x input-y]} entities]
