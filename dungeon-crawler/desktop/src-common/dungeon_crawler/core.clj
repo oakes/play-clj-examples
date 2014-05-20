@@ -8,6 +8,8 @@
             [play-clj.g2d :refer :all]
             [play-clj.ui :refer :all]))
 
+(declare dungeon-crawler main-screen npc-health-screen overlay-screen)
+
 (defonce manager (asset-manager))
 (set-asset-manager! manager)
 
@@ -52,10 +54,16 @@
             (e/create-ogres 20)]
            flatten
            (reduce #(e/randomize-locations screen %1 %2) []))))
+  
   :on-render
   (fn [screen entities]
     (clear!)
     (let [me (u/get-player entities)]
+      ; update health bars
+      (->> (some #(if (= (:id %) (:mouse-npc-id screen)) %) entities)
+           (run! npc-health-screen :on-update-health-bar :entity))
+      (run! overlay-screen :on-update-health-bar :entity me)
+      ; run game logic
       (->> entities
            (map (fn [entity]
                   (->> entity
@@ -67,9 +75,11 @@
            play-sounds!
            (render-sorted! screen u/sort-entities ["walls"])
            (update-screen! screen))))
+  
   :on-resize
   (fn [screen entities]
     (height! screen u/vertical-tiles))
+  
   :on-touch-down
   (fn [{:keys [input-x input-y button] :as screen} entities]
     (when (= button (button-code :right))
@@ -77,33 +87,38 @@
             victim (u/get-entity-at-cursor screen entities input-x input-y)
             victim (when (u/can-attack? me victim) victim)]
         (e/attack screen me victim entities))))
+  
   :on-mouse-moved
   (fn [{:keys [input-x input-y] :as screen} entities]
-    (if (u/get-entity-at-cursor screen entities input-x input-y)
-      (input! :set-cursor-image (:attack-cursor screen) 0 0)
-      (input! :set-cursor-image nil 0 0))))
+    (let [e (u/get-entity-at-cursor screen entities input-x input-y)]
+      (input! :set-cursor-image (if e (:attack-cursor screen) nil) 0 0)
+      (update! screen :mouse-npc-id (:id e))
+      nil)))
 
 (defscreen npc-health-screen
   :on-show
   (fn [screen entities]
     (shape :filled))
+  
   :on-render
   (fn [screen entities]
-    (when-let [e (u/get-entity-at-cursor (-> main-screen :screen deref)
-                                         (-> main-screen :entities deref)
-                                         (game :x)
-                                         (game :y))]
+    ; draw on main-screen so we can use its coordinate system
+    (draw! (-> main-screen :screen deref) entities))
+  
+  ; custom function that is invoked in main-screen
+  :on-update-health-bar
+  (fn [screen entities]
+    (if-let [e (:entity screen)]
       (let [bar-x (:x e)
             bar-y (+ (:y e) (:height e))
             bar-w (:width e)
             pct (/ (:health e) (+ (:health e) (:wounds e)))]
-        (->> (shape (first entities)
-                    :set-color (color :red)
-                    :rect bar-x bar-y bar-w u/npc-bar-h
-                    :set-color (color :green)
-                    :rect bar-x bar-y (* bar-w pct) u/npc-bar-h)
-             vector
-             (draw! (-> main-screen :screen deref)))))))
+        (shape (first entities)
+               :set-color (color :red)
+               :rect bar-x bar-y bar-w u/npc-bar-h
+               :set-color (color :green)
+               :rect bar-x bar-y (* bar-w pct) u/npc-bar-h))
+      (shape (first entities)))))
 
 (defscreen overlay-screen
   :on-show
@@ -119,27 +134,36 @@
      ; this is meant for testing particle effects
      (comment assoc (particle-effect "particles/fire.p")
             :id :particle)])
+  
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
            (case (:id entity)
              :fps (doto entity (label! :set-text (str (game :fps))))
-             :bar (let [me (u/get-player (-> main-screen :entities deref))
-                        pct (/ (:health me) (+ (:health me) (:wounds me)))]
-                    (shape entity
-                           :set-color (color :red)
-                           :rect 0 0 u/bar-w u/bar-h
-                           :set-color (color :green)
-                           :rect 0 0 u/bar-w (* u/bar-h pct)))
              entity))
          (render! screen)))
+  
   :on-resize
   (fn [screen entities]
     (height! screen 300)
     (for [e entities]
       (case (:id e)
         :particle (assoc e :x (width screen) :y 0)
-        e))))
+        e)))
+  
+  ; custom function that is invoked in main-screen
+  :on-update-health-bar
+  (fn [screen entities]
+    (for [entity entities]
+      (case (:id entity)
+        :bar (let [me (:entity screen)
+                   pct (/ (:health me) (+ (:health me) (:wounds me)))]
+               (shape entity
+                      :set-color (color :red)
+                      :rect 0 0 u/bar-w u/bar-h
+                      :set-color (color :green)
+                      :rect 0 0 u/bar-w (* u/bar-h pct)))
+        entity))))
 
 (defgame dungeon-crawler
   :on-create
