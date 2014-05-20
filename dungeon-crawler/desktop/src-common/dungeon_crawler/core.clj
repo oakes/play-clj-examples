@@ -43,20 +43,14 @@
           rooms (for [row (range r/rows)
                       col (range r/cols)]
                   {:x row :y col})
-          hurt-sound-1 (sound "playerhurt.wav")
-          hurt-sound-2 (sound "monsterhurt.wav")
-          death-sound (sound "death.wav")
           me (assoc (e/create-player)
                     :x start-player-x
-                    :y start-player-y
-                    :hurt-sound hurt-sound-1
-                    :death-sound death-sound)]
+                    :y start-player-y)]
       (r/connect-rooms! screen rooms start-room)
       (->> [(isometric->screen screen me)
             (e/create-elementals 20)
             (e/create-ogres 20)]
            flatten
-           (map #(if-not (:hurt-sound %) (assoc % :hurt-sound hurt-sound-2) %))
            (reduce #(e/randomize-locations screen %1 %2) []))))
   :on-render
   (fn [screen entities]

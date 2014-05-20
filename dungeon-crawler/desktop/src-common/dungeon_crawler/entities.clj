@@ -41,7 +41,9 @@
            :player? true
            :max-velocity 2
            :attack-interval 0.25
-           :health 40)))
+           :health 40
+           :hurt-sound (sound "playerhurt.wav")
+           :death-sound (sound "death.wav"))))
 
 (defn create-ogres
   [n]
@@ -52,7 +54,8 @@
                 :npc? true
                 :max-velocity 1
                 :x-feet 0.35
-                :y-feet 0.35)
+                :y-feet 0.35
+                :hurt-sound (sound "monsterhurt.wav"))
          repeat
          (take n))))
 
@@ -65,7 +68,8 @@
                 :npc? true
                 :max-velocity 2
                 :x-feet 0.35
-                :y-feet 0.35)
+                :y-feet 0.35
+                :hurt-sound (sound "monsterhurt.wav"))
          repeat
          (take n))))
 
