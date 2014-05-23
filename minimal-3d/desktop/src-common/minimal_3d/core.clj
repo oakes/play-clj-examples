@@ -25,7 +25,7 @@
           builder (model-builder)]
       (-> (model-builder! builder :create-box 2 2 2 model-mat model-attrs)
           model
-          (assoc :x 1 :y 0 :z 0))))
+          (assoc :x 0 :y 0 :z 0))))
   :on-render
   (fn [screen entities]
     (clear! 1 1 1 1)
