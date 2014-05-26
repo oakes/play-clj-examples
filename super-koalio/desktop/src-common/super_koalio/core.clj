@@ -13,7 +13,7 @@
   [screen entities]
   (doseq [{:keys [x y height me? to-destroy]} entities]
     (when me?
-      (x! screen x)
+      (position! screen x (/ u/vertical-tiles 2))
       (when (< y (- height))
         (set-screen! super-koalio main-screen text-screen)))
     (when-let [[tile-x tile-y] to-destroy]
@@ -43,11 +43,7 @@
          (update-screen! screen)))
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
-    (orthographic! screen
-                   :set-to-ortho
-                   false
-                   (* u/vertical-tiles (/ width height))
-                   u/vertical-tiles)))
+    (height! screen u/vertical-tiles)))
 
 (defscreen text-screen
   :on-show
