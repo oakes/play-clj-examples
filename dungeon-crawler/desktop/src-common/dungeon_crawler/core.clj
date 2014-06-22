@@ -1,5 +1,3 @@
-(set! *warn-on-reflection* true)
-
 (ns dungeon-crawler.core
   (:require [dungeon-crawler.entities :as e]
             [dungeon-crawler.rooms :as r]

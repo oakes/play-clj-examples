@@ -1,5 +1,3 @@
-(set! *warn-on-reflection* true)
-
 (ns minimal-3d.core
   (:require [play-clj.core :refer :all]
             [play-clj.g3d :refer :all]

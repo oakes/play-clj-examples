@@ -1,5 +1,3 @@
-(set! *warn-on-reflection* true)
-
 (ns minicraft.core
   (:require [minicraft.entities :as e]
             [minicraft.utils :as u]
