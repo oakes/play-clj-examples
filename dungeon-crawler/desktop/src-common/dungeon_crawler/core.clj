@@ -58,7 +58,7 @@
     (clear!)
     (let [me (u/get-player entities)]
       ; update health bars
-      (->> (some #(if (= (:id %) (:mouse-npc-id screen)) %) entities)
+      (->> (find-first #(= (:id %) (:mouse-npc-id screen)) entities)
            (run! npc-health-screen :on-update-health-bar :entity))
       (run! overlay-screen :on-update-health-bar :entity me)
       ; run game logic
@@ -69,7 +69,7 @@
                        (e/animate screen)
                        (e/prevent-move screen entities)
                        (e/adjust screen))))
-           (e/attack screen (some #(if (u/can-attack? % me) %) entities) me)
+           (e/attack screen (find-first #(u/can-attack? % me) entities) me)
            play-sounds!
            (render-sorted! screen u/sort-entities ["walls"])
            (update-screen! screen))))

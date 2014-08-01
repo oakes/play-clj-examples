@@ -71,7 +71,7 @@
 
 (defn get-player
   [entities]
-  (some #(if (:player? %) %) entities))
+  (find-first :player? entities))
 
 (defn ^:private get-player-velocity
   [{:keys [x-velocity y-velocity max-velocity]}]
@@ -146,7 +146,7 @@
 
 (defn find-id
   [entities id]
-  (some #(if (= id (:id %)) %) entities))
+  (find-first #(= id (:id %)) entities))
 
 (defn split-texture
   [path size mask-size]

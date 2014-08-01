@@ -47,7 +47,7 @@
 
 (defn move-paddle!
   [entities]
-  (when-let [entity (some #(if (:paddle? %) %) entities)]
+  (when-let [entity (find-first :paddle? entities)]
     (body-x! entity (- (/ (game :x) pixels-per-tile) (/ (:width entity) 2)))))
 
 (defscreen main-screen

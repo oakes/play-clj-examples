@@ -170,8 +170,7 @@
 
 (defn attack-player
   [entities]
-  (if-let [npc (some #(if (npc-attacker? % (u/get-player entities)) %)
-                     entities)]
+  (if-let [npc (find-first #(npc-attacker? % (u/get-player entities)) entities)]
     (attack entities npc)
     entities))
 
