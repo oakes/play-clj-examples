@@ -1,3 +1,6 @@
+## play-clj-examples
+This repository provides public domain examples of games using [play-clj](https://github.com/oakes/play-clj).
+
 ## Contents
 
 * **breakout** - an arcade game based on the Atari classic
