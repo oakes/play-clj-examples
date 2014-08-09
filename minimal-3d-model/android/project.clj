@@ -1,13 +1,13 @@
 (defproject minimal-3d-model "0.0.1-SNAPSHOT"
   :description "FIXME: write description"
   
-  :dependencies [[com.badlogicgames.gdx/gdx "1.2.0" :use-resources true]
-                 [com.badlogicgames.gdx/gdx-backend-android "1.2.0"]
-                 [com.badlogicgames.gdx/gdx-box2d "1.2.0"]
-                 [com.badlogicgames.gdx/gdx-bullet "1.2.0"]
+  :dependencies [[com.badlogicgames.gdx/gdx "1.3.0" :use-resources true]
+                 [com.badlogicgames.gdx/gdx-backend-android "1.3.0"]
+                 [com.badlogicgames.gdx/gdx-box2d "1.3.0"]
+                 [com.badlogicgames.gdx/gdx-bullet "1.3.0"]
                  [neko/neko "3.0.1"]
                  [org.clojure-android/clojure "1.6.0-RC1" :use-resources true]
-                 [play-clj "0.3.9-SNAPSHOT"]]
+                 [play-clj "0.3.9"]]
   :profiles {:dev {:dependencies [[android/tools.nrepl "0.2.0-bigstack"]
                                   [compliment "0.1.0"]]
                    :android {:aot :all-with-unused}}
