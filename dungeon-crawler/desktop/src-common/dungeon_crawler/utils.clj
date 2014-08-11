@@ -174,25 +174,3 @@
                 (and npc? (> health 0))
                 (when entity)))
           entities)))
-
-(defn sort-entities
-  [entities]
-  (sort (fn [e1 e2]
-          (cond
-            (and (:health e1)
-                 (:health e2)
-                 (= (:health e1) 0)
-                 (> (:health e2) 0))
-            -1
-            (and (:health e1)
-                 (:health e2)
-                 (> (:health e1) 0)
-                 (= (:health e2) 0))
-            1
-            (> (:y e1) (:y e2))
-            -1
-            (> (:y e2) (:y e1))
-            1
-            :else
-            0))
-        entities))

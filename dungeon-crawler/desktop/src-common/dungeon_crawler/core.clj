@@ -25,6 +25,14 @@
       (sound! play-sound :play)))
   (map #(dissoc % :play-sound) entities))
 
+(defn render-everything!
+  [screen entities]
+  (->> (find-first #(= (:id %) (:mouse-npc-id screen)) entities)
+       (e/update-health-bar (:npc-health-bar screen))
+       (conj entities)
+       (render-sorted! screen ["walls"]))
+  entities)
+
 (defscreen main-screen
   :on-show
   (fn [screen entities]
@@ -33,6 +41,7 @@
                       (update! screen
                                :attack-cursor (pixmap "dwarven_gauntlet.png")
                                :camera (orthographic)
+                               :npc-health-bar (shape :filled)
                                :renderer))
           start-room {:x (rand-int r/rows)
                       :y (rand-int r/cols)}
@@ -57,11 +66,7 @@
   (fn [screen entities]
     (clear!)
     (let [me (u/get-player entities)]
-      ; update health bars
-      (->> (find-first #(= (:id %) (:mouse-npc-id screen)) entities)
-           (run! npc-health-screen :on-update-health-bar :entity))
       (run! overlay-screen :on-update-health-bar :entity me)
-      ; run game logic
       (->> entities
            (map (fn [entity]
                   (->> entity
@@ -71,7 +76,7 @@
                        (e/adjust screen))))
            (e/attack screen (find-first #(u/can-attack? % me) entities) me)
            play-sounds!
-           (render-sorted! screen u/sort-entities ["walls"])
+           (render-everything! screen)
            (update-screen! screen))))
   
   :on-resize
@@ -92,31 +97,6 @@
       (input! :set-cursor-image (if e (:attack-cursor screen) nil) 0 0)
       (update! screen :mouse-npc-id (:id e))
       nil)))
-
-(defscreen npc-health-screen
-  :on-show
-  (fn [screen entities]
-    (shape :filled))
-  
-  :on-render
-  (fn [screen entities]
-    ; draw on main-screen so we can use its coordinate system
-    (draw! (-> main-screen :screen deref) entities))
-  
-  ; custom function that is invoked in main-screen
-  :on-update-health-bar
-  (fn [screen entities]
-    (if-let [e (:entity screen)]
-      (let [bar-x (:x e)
-            bar-y (+ (:y e) (:height e))
-            bar-w (:width e)
-            pct (/ (:health e) (+ (:health e) (:wounds e)))]
-        (shape (first entities)
-               :set-color (color :red)
-               :rect bar-x bar-y bar-w u/npc-bar-h
-               :set-color (color :green)
-               :rect bar-x bar-y (* bar-w pct) u/npc-bar-h))
-      (shape (first entities)))))
 
 (defscreen overlay-screen
   :on-show
@@ -166,4 +146,4 @@
 (defgame dungeon-crawler
   :on-create
   (fn [this]
-    (set-screen! this main-screen npc-health-screen overlay-screen)))
+    (set-screen! this main-screen overlay-screen)))

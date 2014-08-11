@@ -73,6 +73,19 @@
          repeat
          (take n))))
 
+(defn update-health-bar
+  [bar entity]
+  (when entity
+    (let [bar-x (:x entity)
+          bar-y (+ (:y entity) (:height entity))
+          bar-w (:width entity)
+          pct (/ (:health entity) (+ (:health entity) (:wounds entity)))]
+      (shape bar
+             :set-color (color :red)
+             :rect bar-x bar-y bar-w u/npc-bar-h
+             :set-color (color :green)
+             :rect bar-x bar-y (* bar-w pct) u/npc-bar-h))))
+
 (defn move
   [{:keys [delta-time]} entities {:keys [x y health] :as entity}]
   (let [[x-velocity y-velocity] (u/get-velocity entities entity)
