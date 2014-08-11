@@ -6,7 +6,7 @@
             [play-clj.g2d :refer :all]
             [play-clj.ui :refer :all]))
 
-(declare dungeon-crawler main-screen npc-health-screen overlay-screen)
+(declare dungeon-crawler main-screen overlay-screen)
 
 (defonce manager (asset-manager))
 (set-asset-manager! manager)
