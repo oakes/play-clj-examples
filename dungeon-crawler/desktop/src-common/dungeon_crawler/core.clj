@@ -84,16 +84,16 @@
     (height! screen u/vertical-tiles))
   
   :on-touch-down
-  (fn [{:keys [input-x input-y button] :as screen} entities]
-    (when (= button (button-code :right))
+  (fn [screen entities]
+    (when (= (:button screen) (button-code :right))
       (let [me (u/get-player entities)
-            victim (u/get-entity-at-cursor screen entities input-x input-y)
+            victim (u/get-entity-at-cursor screen entities)
             victim (when (u/can-attack? me victim) victim)]
         (e/attack screen me victim entities))))
   
   :on-mouse-moved
-  (fn [{:keys [input-x input-y] :as screen} entities]
-    (let [e (u/get-entity-at-cursor screen entities input-x input-y)]
+  (fn [screen entities]
+    (let [e (u/get-entity-at-cursor screen entities)]
       (input! :set-cursor-image (if e (:attack-cursor screen) nil) 0 0)
       (update! screen :mouse-npc-id (:id e))
       nil)))

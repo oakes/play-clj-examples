@@ -166,10 +166,9 @@
        (near-entity? e e2 attack-distance)))
 
 (defn get-entity-at-cursor
-  [screen entities input-x input-y]
-  (let [cursor-pos (input->screen screen input-x input-y)]
-    (find-first (fn [{:keys [x y width height npc? health] :as entity}]
-                  (-> (rectangle x y width height)
-                      (rectangle! :contains (:x cursor-pos) (:y cursor-pos))
-                      (and npc? (> health 0))))
-                entities)))
+  [screen entities]
+  (find-first (fn [{:keys [x y width height npc? health] :as entity}]
+                (-> (rectangle x y width height)
+                    (rectangle! :contains (:x screen) (:y screen))
+                    (and npc? (> health 0))))
+              entities))
