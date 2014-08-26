@@ -18,6 +18,7 @@
                        (near! 0.1)
                        (far! 300)))
     (model "knight.g3dj"))
+  
   :on-render
   (fn [screen entities]
     (clear! 1 1 1 1)
@@ -33,6 +34,7 @@
     (assoc (label "0" (color :black))
            :id :fps
            :x 5))
+  
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
@@ -40,6 +42,7 @@
              :fps (doto entity (label! :set-text (str (game :fps))))
              entity))
          (render! screen)))
+  
   :on-resize
   (fn [screen entities]
     (height! screen 300)))

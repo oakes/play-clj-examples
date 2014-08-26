@@ -78,18 +78,22 @@
          (body-position! 0 5 5))
        (doto (create-box! screen 4 4)
          (body-position! 0 5 0))]))
+  
   :on-render
   (fn [screen entities]
     (clear!)
     (->> entities
          (step! screen)
          (render! screen)))
+  
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
     (size! screen width height))
+  
   :on-touch-down
   (fn [{:keys [x y] :as screen} entities]
     (conj entities (create-box! screen 4 4)))
+  
   :on-begin-contact
   (fn [screen entities]
     (let [e1 (first-entity screen entities)
@@ -104,6 +108,7 @@
     (assoc (label "0" (color :white))
            :id :fps
            :x 5))
+  
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
@@ -111,6 +116,7 @@
              :fps (doto entity (label! :set-text (str (game :fps))))
              entity))
          (render! screen)))
+  
   :on-resize
   (fn [screen entities]
     (height! screen 300)))

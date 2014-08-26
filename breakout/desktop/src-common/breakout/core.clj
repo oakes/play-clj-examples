@@ -98,20 +98,24 @@
          (assoc (doto (create-rect-entity! screen block block-w block-h)
                   (body-position! x y 0))
                 :block? true))]))
+  
   :on-render
   (fn [screen entities]
     (clear!)
     (->> entities
          (step! screen)
          (render! screen)))
+  
   :on-mouse-moved
   (fn [screen entities]
     (move-paddle! entities)
     nil)
+  
   :on-touch-dragged
   (fn [screen entities]
     (move-paddle! entities)
     nil)
+  
   :on-begin-contact
   (fn [screen entities]
     (when-let [entity (first-entity screen entities)]
@@ -128,6 +132,7 @@
     (assoc (label "0" (color :white))
            :id :fps
            :x 5))
+  
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
@@ -135,6 +140,7 @@
              :fps (doto entity (label! :set-text (str (game :fps))))
              entity))
          (render! screen)))
+  
   :on-resize
   (fn [screen entities]
     (height! screen 300)))

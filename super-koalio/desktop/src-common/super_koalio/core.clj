@@ -29,6 +29,7 @@
           player-images (for [col [0 1 2 3 4]]
                           (texture (aget tiles 0 col)))]
       (apply e/create player-images)))
+  
   :on-render
   (fn [screen entities]
     (clear! 0.5 0.5 1 1)
@@ -39,6 +40,7 @@
                     (e/animate screen)))
          (render! screen)
          (update-screen! screen)))
+  
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
     (height! screen u/vertical-tiles)))
@@ -50,6 +52,7 @@
     (assoc (label "0" (color :white))
            :id :fps
            :x 5))
+  
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
@@ -57,6 +60,7 @@
              :fps (doto entity (label! :set-text (str (game :fps))))
              entity))
          (render! screen)))
+  
   :on-resize
   (fn [screen entities]
     (height! screen 300)))

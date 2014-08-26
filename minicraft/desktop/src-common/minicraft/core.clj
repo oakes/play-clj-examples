@@ -68,6 +68,7 @@
            flatten
            (map #(if-not (:hurt-sound %) (assoc % :hurt-sound hurt-sound-2) %))
            (reduce #(e/randomize-locations screen %1 %2) []))))
+  
   :on-render
   (fn [screen entities]
     (clear!)
@@ -85,15 +86,18 @@
          play-sounds!
          (render-if-necessary! screen)
          (update-screen! screen)))
+  
   :on-resize
   (fn [screen entities]
     (height! screen u/vertical-tiles))
+  
   :on-key-down
   (fn [{:keys [key]} entities]
     (when-let [player (u/get-player entities)]
       (cond
         (= key (key-code :space))
         (e/attack entities player))))
+  
   :on-touch-down
   (fn [{:keys [input-x input-y]} entities]
     (let [player (u/get-player entities)
@@ -112,6 +116,7 @@
     (assoc (label "0" (color :white))
            :id :fps
            :x 5))
+  
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
@@ -119,6 +124,7 @@
              :fps (doto entity (label! :set-text (str (game :fps))))
              entity))
          (render! screen)))
+  
   :on-resize
   (fn [screen entities]
     (height! screen 300)))

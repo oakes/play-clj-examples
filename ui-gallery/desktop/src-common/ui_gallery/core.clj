@@ -28,13 +28,16 @@
               (text-field "I'm a text field" ui-skin)]
              :align (align :center)
              :set-fill-parent true)))
+  
   :on-render
   (fn [screen entities]
     (clear!)
     (render! screen entities))
+  
   :on-resize
   (fn [screen entities]
     (height! screen (:height screen)))
+  
   :on-ui-changed
   (fn [screen entities]
     (println (:actor screen))))
