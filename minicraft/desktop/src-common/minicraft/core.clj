@@ -94,19 +94,18 @@
   :on-key-down
   (fn [{:keys [key]} entities]
     (when-let [player (u/get-player entities)]
-      (cond
-        (= key (key-code :space))
+      (when (= key (key-code :space))
         (e/attack entities player))))
   
   :on-touch-down
-  (fn [{:keys [input-x input-y]} entities]
+  (fn [screen entities]
     (let [player (u/get-player entities)
           min-x (/ (game :width) 3)
           max-x (* (game :width) (/ 2 3))
           min-y (/ (game :height) 3)
           max-y (* (game :height) (/ 2 3))]
-      (cond
-        (and (< min-x input-x max-x) (< min-y input-y max-y))
+      (when (and (< min-x (game :x) max-x)
+                 (< min-y (game :y) max-y))
         (e/attack entities player)))))
 
 (defscreen text-screen
