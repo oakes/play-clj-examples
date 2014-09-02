@@ -13,7 +13,8 @@
            :start-layer start-layer
            :min-distance 2
            :health 6
-           :direction :down))
+           :direction :down
+           :hurt-sound (sound "monsterhurt.wav")))
   ([start-layer down up] ; slimes
     (let [anim (animation u/duration [down up])]
       (assoc (create start-layer down)
@@ -75,7 +76,10 @@
 (defn create-player
   [down up stand-right walk-right]
   (assoc (create "grass" down up stand-right walk-right)
-         :player? true))
+         :player? true
+         :hurt-sound (sound "playerhurt.wav")
+         :death-sound (sound "death.wav")
+         :play-sound (sound "test.wav")))
 
 (defn move
   [{:keys [delta-time]} entities {:keys [x y] :as entity}]

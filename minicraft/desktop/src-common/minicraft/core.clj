@@ -5,6 +5,9 @@
             [play-clj.g2d :refer :all]
             [play-clj.ui :refer :all]))
 
+(defonce manager (asset-manager))
+(set-asset-manager! manager)
+
 (defn update-screen!
   [screen entities]
   (doseq [{:keys [x y player?]} entities]
@@ -35,10 +38,6 @@
                       (update! screen :camera (orthographic) :renderer))
           sheet (texture "tiles.png")
           tiles (texture! sheet :split 16 16)
-          start-sound (sound "test.wav")
-          hurt-sound-1 (sound "playerhurt.wav")
-          hurt-sound-2 (sound "monsterhurt.wav")
-          death-sound (sound "death.wav")
           player-images (for [col [0 1 2 3]]
                           (texture (aget tiles 6 col)))
           zombie-images (for [col [4 5 6 7]]
@@ -55,10 +54,7 @@
                          attack-right-image]
           hit-image (texture sheet :set-region 40 8 16 16)]
       (->> (pvalues
-             (assoc (apply e/create-player player-images)
-                    :hurt-sound hurt-sound-1
-                    :death-sound death-sound
-                    :play-sound start-sound)
+             (apply e/create-player player-images)
              (apply e/create-attack attack-images)
              (e/create-hit hit-image)
              (take 5 (repeat (apply e/create-zombie zombie-images)))
@@ -66,7 +62,6 @@
              (take 20 (repeat (e/create-tree tree-image)))
              (take 10 (repeat (e/create-cactus cactus-image))))
            flatten
-           (map #(if-not (:hurt-sound %) (assoc % :hurt-sound hurt-sound-2) %))
            (reduce #(e/randomize-locations screen %1 %2) []))))
   
   :on-render
