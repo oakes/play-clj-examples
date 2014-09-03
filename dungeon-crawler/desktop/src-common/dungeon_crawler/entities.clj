@@ -180,7 +180,7 @@
          (isometric->screen screen {:x tile-x :y tile-y}))
        shuffle
        (drop-while
-         #(or (u/near-entity? (merge entity %) (u/get-player entities) 5)
+         #(or (u/near-entity? (merge entity %) (find-first :player? entities) 5)
               (u/invalid-location? screen entities (merge entity %))))
        first
        (merge entity)))

@@ -65,7 +65,7 @@
   :on-render
   (fn [screen entities]
     (clear!)
-    (let [me (u/get-player entities)]
+    (let [me (find-first :player? entities)]
       (run! overlay-screen :on-update-health-bar :entity me)
       (->> entities
            (map (fn [entity]
@@ -86,7 +86,7 @@
   :on-touch-down
   (fn [screen entities]
     (when (= (:button screen) (button-code :right))
-      (let [me (u/get-player entities)
+      (let [me (find-first :player? entities)
             victim (u/get-entity-at-cursor screen entities)
             victim (when (u/can-attack? me victim) victim)]
         (e/attack screen me victim entities))))

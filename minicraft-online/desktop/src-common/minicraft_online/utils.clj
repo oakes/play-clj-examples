@@ -64,10 +64,6 @@
       0
       velocity)))
 
-(defn get-player
-  [entities]
-  (find-first :player? entities))
-
 (defn ^:private touched?
   [key]
   (and (game :touched?)

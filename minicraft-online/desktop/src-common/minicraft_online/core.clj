@@ -22,7 +22,7 @@
 
 (defn broadcast-update!
   [screen entities]
-  (let [player (u/get-player entities)
+  (let [player (find-first :player? entities)
         send-keys (-> topics :minicraft-update keys)]
     (broadcast! screen :minicraft-update (select-keys player send-keys))))
 
@@ -101,14 +101,14 @@
   
   :on-key-down
   (fn [screen entities]
-    (when-let [player (u/get-player entities)]
+    (when-let [player (find-first :player? entities)]
       (when (= (:key screen) (key-code :space))
         (broadcast-attack! screen player)
         (e/attack entities player))))
   
   :on-touch-down
   (fn [screen entities]
-    (let [player (u/get-player entities)
+    (let [player (find-first :player? entities)
           min-x (/ (game :width) 3)
           max-x (* (game :width) (/ 2 3))
           min-y (/ (game :height) 3)
