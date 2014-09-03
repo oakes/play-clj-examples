@@ -20,16 +20,10 @@
                                 :y-velocity s/Num}
              :minicraft-attack {:id s/Num}})
 
-(defn broadcast-update!
-  [screen entities]
-  (let [player (find-first :player? entities)
-        send-keys (-> topics :minicraft-update keys)]
-    (broadcast! screen :minicraft-update (select-keys player send-keys))))
-
-(defn broadcast-attack!
-  [screen player]
-  (let [send-keys (-> topics :minicraft-attack keys)]
-    (broadcast! screen :minicraft-attack (select-keys player send-keys))))
+(defn broadcast-player!
+  [screen player topic]
+  (let [send-keys (-> topics (get topic) keys)]
+    (broadcast! screen topic (select-keys player send-keys))))
 
 (defn update-screen!
   [screen entities]
@@ -54,9 +48,8 @@
   (map #(dissoc % :play-sound) entities))
 
 (defn restart-if-dead!
-  [entities]
-  (when (some->> (find-first :player? entities)
-                 :death-time
+  [player]
+  (when (some->> (:death-time player)
                  (- (System/currentTimeMillis))
                  (< u/death-delay))
     (set-screen! minicraft-online main-screen text-screen)))
@@ -75,10 +68,11 @@
   
   :on-render
   (fn [screen entities]
-    (broadcast-update! screen entities)
+    (let [player (find-first :player? entities)]
+      (broadcast-player! screen player :minicraft-update)
+      (restart-if-dead! player))
     (run! text-screen :on-update-player-count
           :count (count (filter :person? entities)))
-    (restart-if-dead! entities)
     (clear!)
     (->> entities
          (map (fn [entity]
@@ -103,7 +97,7 @@
   (fn [screen entities]
     (when-let [player (find-first :player? entities)]
       (when (= (:key screen) (key-code :space))
-        (broadcast-attack! screen player)
+        (broadcast-player! screen player :minicraft-attack)
         (e/attack entities player))))
   
   :on-touch-down
@@ -115,7 +109,7 @@
           max-y (* (game :height) (/ 2 3))]
       (when (and (< min-x (game :point-x) max-x)
                  (< min-y (game :point-y) max-y))
-        (broadcast-attack! screen player)
+        (broadcast-player! screen player :minicraft-attack)
         (e/attack entities player))))
   
   :on-network-receive
