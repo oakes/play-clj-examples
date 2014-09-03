@@ -53,6 +53,14 @@
       (sound! play-sound :play)))
   (map #(dissoc % :play-sound) entities))
 
+(defn restart-if-dead!
+  [entities]
+  (when (some->> (find-first :player? entities)
+                 :death-time
+                 (- (System/currentTimeMillis))
+                 (< u/death-delay))
+    (set-screen! minicraft-online main-screen text-screen)))
+
 (defscreen main-screen
   :on-show
   (fn [screen entities]
@@ -67,10 +75,11 @@
   
   :on-render
   (fn [screen entities]
-    (clear!)
     (broadcast-update! screen entities)
     (run! text-screen :on-update-player-count
           :count (count (filter :person? entities)))
+    (restart-if-dead! entities)
+    (clear!)
     (->> entities
          (map (fn [entity]
                 (->> entity

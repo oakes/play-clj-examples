@@ -155,11 +155,12 @@
                e)
              (= e victim)
              (let [health (max 0 (- (:health e) (:damage attacker)))]
-               (assoc e
-                      :play-sound (if (and (= health 0) (:death-sound victim))
-                                    (:death-sound victim)
-                                    (:hurt-sound victim))
-                      :health health))
+               (merge e
+                      (if (and (= health 0) (:death-sound victim))
+                        {:play-sound (:death-sound victim)
+                         :death-time (System/currentTimeMillis)}
+                        {:play-sound (:hurt-sound victim)})
+                      {:health health}))
              :else
              e))
          entities)))
@@ -247,4 +248,4 @@
   [entity]
   (and (:person? entity)
        (:last-update entity)
-       (> (- (System/currentTimeMillis) (:last-update entity)) 5000)))
+       (> (- (System/currentTimeMillis) (:last-update entity)) u/timeout)))

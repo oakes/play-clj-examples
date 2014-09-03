@@ -15,6 +15,8 @@
 (def ^:const max-attack-time 1)
 (def ^:const aggro-distance 6)
 (def ^:const attack-distance 1.5)
+(def ^:const timeout 5000)
+(def ^:const death-delay 2000)
 
 (defn completely-on-layer?
   [screen {:keys [x y width height]} & layer-names]
