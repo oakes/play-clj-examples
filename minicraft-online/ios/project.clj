@@ -11,7 +11,7 @@
   :source-paths ["src/clojure" "../desktop/src-common"]
   :java-source-paths ["src/java"]
   :javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"]
-  :ios {:robovm-opts ["-forcelinkclasses" "minicraft_online.**:clojure.**:com.badlogic.**:play_clj.**"
+  :ios {:robovm-opts ["-forcelinkclasses" "minicraft_online.**:clojure.**:com.badlogic.**:play_clj.**:schema.**:potemkin**:potemkin.**"
                       "-libs" "libs/libObjectAL.a:libs/libgdx.a:libs/libgdx-box2d.a:libs/libgdx-bullet.a"
                       "-frameworks" "UIKit:OpenGLES:QuartzCore:CoreGraphics:OpenAL:AudioToolbox:AVFoundation"
                       "-resources" "../desktop/resources/**"]}
