@@ -134,7 +134,7 @@
           (when-not (:player? entity)
             (e/attack entities entity))))))
   
-  :on-dispose
+  :on-hide
   (fn [screen entities]
     (disconnect! screen)))
 
