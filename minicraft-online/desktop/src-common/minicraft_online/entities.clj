@@ -22,7 +22,6 @@
              :up anim
              :right anim
              :left anim
-             :min-distance 10
              :health 8
              :damage 2
              :attack-time 0)))
@@ -36,7 +35,6 @@
              :up (animation u/duration [up up-flip])
              :right (animation u/duration [stand-right walk-right])
              :left (animation u/duration [stand-flip walk-flip])
-             :min-distance 10
              :health 20
              :damage 4
              :attack-time 0))))
@@ -246,6 +244,5 @@
 
 (defn inactive?
   [entity]
-  (and (:person? entity)
-       (:last-update entity)
+  (and (:last-update entity)
        (> (- (System/currentTimeMillis) (:last-update entity)) u/timeout)))
