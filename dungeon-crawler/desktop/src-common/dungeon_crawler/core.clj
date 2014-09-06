@@ -66,7 +66,7 @@
   (fn [screen entities]
     (clear!)
     (let [me (find-first :player? entities)]
-      (run! overlay-screen :on-update-health-bar :entity me)
+      (screen! overlay-screen :on-update-health-bar :entity me)
       (->> entities
            (map (fn [entity]
                   (->> entity

@@ -75,8 +75,8 @@
     (let [player (find-first :player? entities)]
       (broadcast-player! screen player :minicraft-update)
       (restart-if-dead! player))
-    (run! text-screen :on-update-player-count
-          :count (count (filter :person? entities)))
+    (screen! text-screen :on-update-player-count
+             :count (count (filter :person? entities)))
     (clear!)
     (->> entities
          (map (fn [entity]
