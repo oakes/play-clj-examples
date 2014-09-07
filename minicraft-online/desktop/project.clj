@@ -13,7 +13,7 @@
                   :classifier "natives-desktop"]
                  [org.clojure/clojure "1.6.0"]
                  [play-clj "0.3.11"]
-                 [play-clj.net "0.1.0"]
+                 [play-clj.net "0.1.1"]
                  [prismatic/schema "0.2.6"]]
   
   :source-paths ["src" "src-common"]
