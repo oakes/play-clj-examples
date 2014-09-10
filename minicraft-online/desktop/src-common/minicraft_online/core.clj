@@ -13,7 +13,6 @@
 (set-asset-manager! manager)
 
 (def topics {:minicraft-update {:id s/Num
-                                :direction s/Keyword
                                 :health s/Num
                                 :x s/Num
                                 :y s/Num
