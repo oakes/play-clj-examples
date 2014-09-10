@@ -231,7 +231,7 @@
 
 (defn update-person
   [screen entities entity attrs]
-  (let [updated-person (merge entity attrs)
+  (let [updated-person (merge entity (dissoc attrs :health)) ; we're keeping track of health locally
         entities (remove #{entity} entities)]
     (when-not (u/near-entities? entities updated-person 1)
       (conj entities updated-person))))

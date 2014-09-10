@@ -14,6 +14,7 @@
 
 (def topics {:minicraft-update {:id s/Num
                                 :direction s/Keyword
+                                :health s/Num
                                 :x s/Num
                                 :y s/Num
                                 :x-velocity s/Num
