@@ -66,9 +66,9 @@
                           :camera (orthographic)
                           :renderer renderer
                           :network network)]
-      (reduce #(e/randomize-locations screen %1 %2)
-              []
-              [(e/create-player) (e/create-attack) (e/create-hit)])))
+      [(e/randomize-location screen (e/create-player))
+       (e/create-attack)
+       (e/create-hit)]))
   
   :on-render
   (fn [screen entities]

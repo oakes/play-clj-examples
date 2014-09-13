@@ -6,6 +6,8 @@
 (defn ^:private create
   ([start-layer img]
     (assoc img
+           :x 0
+           :y 0
            :width 2
            :height 2
            :x-velocity 0
@@ -189,16 +191,15 @@
       entity)
     entity))
 
-(defn randomize-locations
-  [screen entities {:keys [width height] :as entity}]
+(defn randomize-location
+  [screen {:keys [width height] :as entity}]
   (->> (for [tile-x (range 0 (- u/map-width width))
              tile-y (range 0 (- u/map-height height))]
          {:x tile-x :y tile-y})
        shuffle
-       (drop-while #(u/invalid-location? screen entities (merge entity %)))
+       (drop-while #(u/invalid-location? screen [] (merge entity %)))
        first
-       (merge entity)
-       (conj entities)))
+       (merge entity)))
 
 (defn prevent-move
   [entities {:keys [x y x-change y-change health] :as entity}]
