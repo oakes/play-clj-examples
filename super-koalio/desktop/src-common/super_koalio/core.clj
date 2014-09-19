@@ -23,7 +23,7 @@
   :on-show
   (fn [screen entities]
     (->> (orthogonal-tiled-map "level1.tmx" (/ 1 u/pixels-per-tile))
-         (update! screen :camera (orthographic) :renderer))
+         (update! screen :record? true :camera (orthographic) :renderer))
     (let [sheet (texture "koalio.png")
           tiles (texture! sheet :split 18 26)
           player-images (for [col [0 1 2 3 4]]
@@ -33,14 +33,16 @@
   :on-render
   (fn [screen entities]
     (clear! 0.5 0.5 1 1)
-    (->> entities
-         (map (fn [entity]
-                (->> entity
-                     (e/move screen)
-                     (e/prevent-move screen)
-                     (e/animate screen))))
-         (render! screen)
-         (update-screen! screen)))
+    (some->> (if (key-pressed? :space)
+               (rewind! screen 2)
+               (map (fn [entity]
+                      (->> entity
+                           (e/move screen)
+                           (e/prevent-move screen)
+                           (e/animate screen)))
+                    entities))
+             (render! screen)
+             (update-screen! screen)))
   
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
