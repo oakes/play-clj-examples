@@ -34,10 +34,11 @@
   (fn [screen entities]
     (clear! 0.5 0.5 1 1)
     (->> entities
-         (map #(->> %
-                    (e/move screen)
-                    (e/prevent-move screen)
-                    (e/animate screen)))
+         (map (fn [entity]
+                (->> entity
+                     (e/move screen)
+                     (e/prevent-move screen)
+                     (e/animate screen))))
          (render! screen)
          (update-screen! screen)))
   
