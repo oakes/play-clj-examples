@@ -33,7 +33,7 @@
   :on-render
   (fn [screen entities]
     (clear! 0.5 0.5 1 1)
-    (some->> (if (key-pressed? :space)
+    (some->> (if (or (key-pressed? :space) (u/touched? :center))
                (rewind! screen 2)
                (map (fn [entity]
                       (->> entity
