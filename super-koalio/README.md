@@ -1,6 +1,6 @@
 ## Introduction
 
-A play-clj game based on a LibGDX test game.
+A play-clj game based on a libGDX test game. Press the space bar to rewind time.
 
 ## Contents
 
