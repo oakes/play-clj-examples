@@ -2,6 +2,7 @@
   (:require [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
             [play-clj.g2d-physics :refer :all]
+            [play-clj.math :refer :all]
             [play-clj.ui :refer :all]))
 
 (declare breakout main-screen text-screen)
@@ -11,7 +12,8 @@
 (defn create-ball-body!
   [screen radius]
   (let [body (add-body! screen (body-def :dynamic))]
-    (->> (circle-shape radius)
+    (->> (circle-shape :set-radius radius
+                       :set-position (vector-2 radius radius))
          (fixture-def :density 1 :friction 0 :restitution 1 :shape)
          (body! body :create-fixture))
     body))
