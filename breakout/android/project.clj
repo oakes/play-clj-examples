@@ -5,11 +5,11 @@
                  [com.badlogicgames.gdx/gdx-backend-android "1.4.1"]
                  [com.badlogicgames.gdx/gdx-box2d "1.4.1"]
                  [com.badlogicgames.gdx/gdx-bullet "1.4.1"]
-                 [neko/neko "3.0.1"]
+                 [neko/neko "3.0.2"]
                  [org.clojure-android/clojure "1.6.0-RC1" :use-resources true]
-                 [play-clj "0.4.1"]]
+                 [play-clj "0.4.2-SNAPSHOT"]]
   :profiles {:dev {:dependencies [[android/tools.nrepl "0.2.0-bigstack"]
-                                  [compliment "0.1.0"]]
+                                  [compliment "0.1.4"]]
                    :android {:aot :all-with-unused}}
              :release {:android
                        {;; Specify the path to your private
@@ -33,5 +33,5 @@
             :dex-opts ["-JXmx2048M"]}
   
   :source-paths ["src/clojure" "../desktop/src-common"]
-  :java-source-paths ["src/java" "gen"]
+  :java-source-paths ["src/java"]
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"])

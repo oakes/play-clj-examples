@@ -21,12 +21,12 @@
   [key]
   (and (game :touched?)
        (case key
-         :down (< (game :point-y) (/ (game :height) 3))
-         :up (> (game :point-y) (* (game :height) (/ 2 3)))
-         :left (< (game :point-x) (/ (game :width) 3))
-         :right (> (game :point-x) (* (game :width) (/ 2 3)))
-         :center (and (< (/ (game :width) 3) (game :point-x) (* (game :width) (/ 2 3)))
-                      (< (/ (game :height) 3) (game :point-y) (* (game :height) (/ 2 3))))
+         :down (< (game :y) (/ (game :height) 3))
+         :up (> (game :y) (* (game :height) (/ 2 3)))
+         :left (< (game :x) (/ (game :width) 3))
+         :right (> (game :x) (* (game :width) (/ 2 3)))
+         :center (and (< (/ (game :width) 3) (game :x) (* (game :width) (/ 2 3)))
+                      (< (/ (game :height) 3) (game :y) (* (game :height) (/ 2 3))))
          false)))
 
 (defn get-x-velocity
