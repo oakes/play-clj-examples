@@ -28,7 +28,7 @@
             ;; Uncomment this if dexer fails with OutOfMemoryException
             ;; :force-dex-optimize true
             
-            :assets-path "../desktop/resources"
+            :assets-paths ["../desktop/resources"]
             :native-libraries-paths ["libs"]
             :target-version "15"
             :aot-exclude-ns ["clojure.parallel" "clojure.core.reducers"]
