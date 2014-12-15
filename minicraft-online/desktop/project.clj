@@ -1,18 +1,18 @@
 (defproject minicraft-online "0.0.1-SNAPSHOT"
   :description "FIXME: write description"
   
-  :dependencies [[com.badlogicgames.gdx/gdx "1.4.1"]
-                 [com.badlogicgames.gdx/gdx-backend-lwjgl "1.4.1"]
-                 [com.badlogicgames.gdx/gdx-box2d "1.4.1"]
-                 [com.badlogicgames.gdx/gdx-box2d-platform "1.4.1"
+  :dependencies [[com.badlogicgames.gdx/gdx "1.5.0"]
+                 [com.badlogicgames.gdx/gdx-backend-lwjgl "1.5.0"]
+                 [com.badlogicgames.gdx/gdx-box2d "1.5.0"]
+                 [com.badlogicgames.gdx/gdx-box2d-platform "1.5.0"
                   :classifier "natives-desktop"]
-                 [com.badlogicgames.gdx/gdx-bullet "1.4.1"]
-                 [com.badlogicgames.gdx/gdx-bullet-platform "1.4.1"
+                 [com.badlogicgames.gdx/gdx-bullet "1.5.0"]
+                 [com.badlogicgames.gdx/gdx-bullet-platform "1.5.0"
                   :classifier "natives-desktop"]
-                 [com.badlogicgames.gdx/gdx-platform "1.4.1"
+                 [com.badlogicgames.gdx/gdx-platform "1.5.0"
                   :classifier "natives-desktop"]
                  [org.clojure/clojure "1.6.0"]
-                 [play-clj "0.4.2"]
+                 [play-clj "0.4.3-SNAPSHOT"]
                  [play-clj.net "0.1.2"]
                  [prismatic/schema "0.2.6"]]
   
