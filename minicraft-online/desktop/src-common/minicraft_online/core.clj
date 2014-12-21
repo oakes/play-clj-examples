@@ -58,10 +58,7 @@
   :on-show
   (fn [screen entities]
     (let [renderer (orthogonal-tiled-map "level1.tmx" (/ 1 u/pixels-per-tile))
-          network (client screen
-                          (keys topics)
-                          "tcp://play-clj.net:4707"
-                          "tcp://play-clj.net:4708")
+          network (client screen (keys topics))
           screen (update! screen
                           :camera (orthographic)
                           :renderer renderer
