@@ -5,7 +5,7 @@
                  [com.badlogicgames.gdx/gdx-box2d "1.5.0"]
                  [com.badlogicgames.gdx/gdx-bullet "1.5.0"]
                  [org.clojure/clojure "1.6.0"]
-                 [play-clj "0.4.3-SNAPSHOT"]
+                 [play-clj "0.4.3"]
                  [play-clj.net "0.1.0"]
                  [prismatic/schema "0.2.6"]]
   :source-paths ["src/clojure" "../desktop/src-common"]
