@@ -1,13 +1,13 @@
 (defproject minicraft-online "0.0.1-SNAPSHOT"
   :description "FIXME: write description"
   
-  :dependencies [[com.badlogicgames.gdx/gdx "1.5.3" :use-resources true]
-                 [com.badlogicgames.gdx/gdx-backend-android "1.5.3"]
-                 [com.badlogicgames.gdx/gdx-box2d "1.5.3"]
-                 [com.badlogicgames.gdx/gdx-bullet "1.5.3"]
+  :dependencies [[com.badlogicgames.gdx/gdx "1.5.5" :use-resources true]
+                 [com.badlogicgames.gdx/gdx-backend-android "1.5.5"]
+                 [com.badlogicgames.gdx/gdx-box2d "1.5.5"]
+                 [com.badlogicgames.gdx/gdx-bullet "1.5.5"]
                  [neko/neko "3.0.2"]
                  [org.clojure-android/clojure "1.6.0-RC1" :use-resources true]
-                 [play-clj "0.4.4"]
+                 [play-clj "0.4.5-SNAPSHOT"]
                  [play-clj.net "0.1.0"]
                  [prismatic/schema "0.2.6"]]
   :profiles {:dev {:dependencies [[android/tools.nrepl "0.2.0-bigstack"]
