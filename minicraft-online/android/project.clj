@@ -6,7 +6,7 @@
                  [com.badlogicgames.gdx/gdx-box2d "1.6.0"]
                  [com.badlogicgames.gdx/gdx-bullet "1.6.0"]
                  [neko/neko "3.2.0"]
-                 [org.clojure-android/clojure "1.7.0-RC1" :use-resources true]
+                 [org.clojure-android/clojure "1.7.0-r3" :use-resources true]
                  [play-clj "0.4.7"]
                  [play-clj.net "0.1.0"]
                  [prismatic/schema "0.2.6"]]
