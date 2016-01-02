@@ -36,10 +36,11 @@
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-    (let [screen (->> (/ 1 u/pixels-per-tile)
+    (let [attack-cursor (graphics! :new-cursor (pixmap "dwarven_gauntlet.png") 0 0)
+          screen (->> (/ 1 u/pixels-per-tile)
                       (isometric-tiled-map "level1.tmx")
                       (update! screen
-                               :attack-cursor (pixmap "dwarven_gauntlet.png")
+                               :attack-cursor attack-cursor
                                :camera (orthographic)
                                :npc-health-bar (shape :filled)
                                :renderer))
@@ -94,7 +95,7 @@
   :on-mouse-moved
   (fn [screen entities]
     (let [e (u/get-entity-at-cursor screen entities)]
-      (input! :set-cursor-image (if e (:attack-cursor screen) nil) 0 0)
+      (graphics! :set-cursor (if e (:attack-cursor screen) nil))
       (update! screen :mouse-npc-id (:id e))
       nil)))
 
