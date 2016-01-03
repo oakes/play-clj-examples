@@ -32,6 +32,9 @@
   :on-render
   (fn [screen entities]
     (clear!)
+    ; we only need to render the screen, because UI entities are automatically drawn when
+    ; the stage they are attached to is drawn. if we called (render! screen entities)
+    ; as usual, it would cause the UI entities to be drawn twice.
     (render! screen)
     entities)
   
