@@ -32,7 +32,8 @@
   :on-render
   (fn [screen entities]
     (clear!)
-    (render! screen entities))
+    (render! screen)
+    entities)
   
   :on-resize
   (fn [screen entities]
