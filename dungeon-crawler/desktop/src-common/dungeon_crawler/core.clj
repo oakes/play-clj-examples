@@ -4,7 +4,8 @@
             [dungeon-crawler.utils :as u]
             [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
-            [play-clj.ui :refer :all]))
+            [play-clj.ui :refer :all])
+  (:import [com.badlogic.gdx.graphics Cursor$SystemCursor]))
 
 (declare dungeon-crawler main-screen overlay-screen)
 
@@ -95,7 +96,9 @@
   :on-mouse-moved
   (fn [screen entities]
     (let [e (u/get-entity-at-cursor screen entities)]
-      (graphics! :set-cursor (if e (:attack-cursor screen) nil))
+      (if e
+        (graphics! :set-cursor (:attack-cursor screen))
+        (graphics! :set-system-cursor Cursor$SystemCursor/Arrow))
       (update! screen :mouse-npc-id (:id e))
       nil)))
 
