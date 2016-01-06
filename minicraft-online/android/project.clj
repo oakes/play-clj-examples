@@ -7,8 +7,8 @@
                  [com.badlogicgames.gdx/gdx-bullet "1.8.0"]
                  [neko/neko "3.2.0"]
                  [org.clojure-android/clojure "1.7.0-r4" :use-resources true]
-                 [play-clj "1.0.0-SNAPSHOT"]
-                 [play-clj.net "0.1.0"]
+                 [play-clj "1.0.0"]
+                 [play-clj.net "0.1.2"]
                  [prismatic/schema "0.2.6"]]
   :profiles {:dev {:dependencies [[org.clojure-android/tools.nrepl "0.2.6-lollipop"]]
                    :android {:aot :all-with-unused}}

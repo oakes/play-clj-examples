@@ -12,7 +12,7 @@
                  [com.badlogicgames.gdx/gdx-platform "1.8.0"
                   :classifier "natives-desktop"]
                  [org.clojure/clojure "1.7.0"]
-                 [play-clj "1.0.0-SNAPSHOT"]
+                 [play-clj "1.0.0"]
                  [play-clj.net "0.1.2"]
                  [prismatic/schema "0.2.6"]]
   
