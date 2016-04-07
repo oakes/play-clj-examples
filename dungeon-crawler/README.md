@@ -9,10 +9,6 @@ A play-clj game in which ... well, that part is up to you.
 * `desktop/src` Desktop-specific code
 * `desktop/src-common` Cross-platform game code
 
-## Building
-
-All projects can be built using [Nightcode](https://sekao.net/nightcode/), or on the command line using [Leiningen](https://github.com/technomancy/leiningen) with the [lein-droid](https://github.com/clojure-android/lein-droid) plugin.
-
 ## Credit
 
 The artwork is courtesy of [Mitsuhiro Itakura](http://opengameart.org/content/64x64-isometric-roguelike-tiles), [Clint Bellanger](http://opengameart.org/content/isometric-hero-and-creatures), and [Jinn](http://opengameart.org/content/dwarven-cursor).
