@@ -36,7 +36,7 @@
          nil?
          not)))
 
-(defn entity-rect
+(defn ^com.badlogic.gdx.math.Rectangle entity-rect
   [{:keys [x y x-feet y-feet width height]} min-distance]
   (rectangle (- (+ x x-feet)
                 (/ min-distance 4))
